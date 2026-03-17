@@ -86,12 +86,12 @@
   </header>
 
   <div class="mode-selector">
-    <button class="mode-btn active" id="btnHipo" onclick="setMode('hipoclorito')">
+    <button class="mode-btn active" id="btnHipo">
       <span class="mode-icon">🧴</span>
       <span class="mode-name">Hipoclorito</span>
       <span class="mode-desc">Cloro líquido · pastillas · granular</span>
     </button>
-    <button class="mode-btn electro" id="btnElectro" onclick="setMode('electrolisis')">
+    <button class="mode-btn electro" id="btnElectro">
       <span class="mode-icon">⚡</span>
       <span class="mode-name">Electrólisis</span>
       <span class="mode-desc">Salina · clorador electrolítico</span>
@@ -455,6 +455,8 @@ function update(){
 }
 
 phInput.oninput=update; orpInput.oninput=update;
+document.getElementById('btnHipo').addEventListener('click', () => setMode('hipoclorito'));
+document.getElementById('btnElectro').addEventListener('click', () => setMode('electrolisis'));
 update();
 </script>
 <script>
