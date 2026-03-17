@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Cloro Libre — Calculadora PPM</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#00d4ff">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cloro PPM">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --surface2: #181c24;
+    --border: rgba(255,255,255,0.07);
+    --text: #e8eaf0;
+    --muted: #5a6070;
+    --accent: #00d4ff;
+    --accent2: #7fff6a;
+    --warn: #ffd166;
+    --danger: #ff5a5a;
+    --safe: #00d4ff;
+    --mono: 'DM Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Subtle grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 36px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-left h1 {
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1;
+    background: linear-gradient(120deg, var(--accent), #a0f0ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header-left p {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  .badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 5px 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* Result hero */
+  .hero {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .result-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .result-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .result-value {
+    font-family: var(--mono);
+    font-size: clamp(40px, 8vw, 72px);
+    font-weight: 300;
+    line-height: 1;
+    color: var(--accent);
+    transition: color 0.4s ease;
+    letter-spacing: -2px;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 100px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    background: rgba(0,212,255,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(0,212,255,0.2);
+    transition: all 0.4s ease;
+  }
+
+  .status-pill::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+    box-shadow: 0 0 8px var(--accent);
+    transition: all 0.4s ease;
+  }
+
+  /* Sliders section */
+  .sliders-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 560px) {
+    .sliders-grid { grid-template-columns: 1fr; }
+  }
+
+  .slider-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    transition: border-color 0.2s;
+  }
+
+  .slider-card:hover {
+    border-color: rgba(0,212,255,0.2);
+  }
+
+  .slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+
+  .slider-name {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .slider-value {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--text);
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  .slider-unit {
+    font-size: 13px;
+    color: var(--muted);
+    margin-left: 2px;
+  }
+
+  /* Custom slider */
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--surface2);
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px rgba(0,212,255,0.5);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  input[type=range]:hover::-webkit-slider-thumb {
+    transform: scale(1.2);
+    box-shadow: 0 0 16px rgba(0,212,255,0.7);
+  }
+
+  input[type=range]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border: none;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px rgba(0,212,255,0.5);
+    cursor: pointer;
+  }
+
+  .slider-range-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  /* Chart card */
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+  }
+
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .chart-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .legend-row {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  canvas#grafico {
+    width: 100% !important;
+    height: 340px !important;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="header-left">
+      <h1>Cloro Libre</h1>
+      <p>Calculadora pH · ORP → ppm</p>
+    </div>
+    <div class="badge">v2.0</div>
+  </header>
+
+  <!-- Result hero -->
+  <div class="hero">
+    <div class="result-block">
+      <span class="result-label">Concentración estimada</span>
+      <div style="display:flex;align-items:flex-end;gap:8px">
+        <div class="result-value" id="resultado">—</div>
+        <div style="font-family:var(--mono);font-size:18px;color:var(--muted);padding-bottom:10px">ppm</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+      <div class="status-pill" id="statusPill">Cargando…</div>
+      <div class="status-pill" id="phPill" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- Sliders -->
+  <div class="sliders-grid">
+    <div class="slider-card">
+      <div class="slider-header">
+        <span class="slider-name">pH</span>
+        <div>
+          <span class="slider-value" id="phVal">7.5</span>
+        </div>
+      </div>
+      <input type="range" min="6.5" max="8.5" step="0.05" value="7.5" id="ph">
+      <div class="slider-range-labels"><span>6.5</span><span>8.5</span></div>
+    </div>
+
+    <div class="slider-card">
+      <div class="slider-header">
+        <span class="slider-name">ORP</span>
+        <div>
+          <span class="slider-value" id="orpVal">750</span>
+          <span class="slider-unit">mV</span>
+        </div>
+      </div>
+      <input type="range" min="550" max="950" step="1" value="750" id="orp">
+      <div class="slider-range-labels"><span>550 mV</span><span>950 mV</span></div>
+    </div>
+  </div>
+
+
+
+  <!-- pH < 7.2 acid warning banner -->
+  <div id="acidBanner" style="display:none;background:rgba(255,160,50,0.07);border:1px solid rgba(255,160,50,0.25);border-radius:12px;padding:14px 18px;margin-bottom:16px;align-items:flex-start;gap:12px;">
+    <span style="font-size:20px;line-height:1;flex-shrink:0">🧪</span>
+    <div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#ffaa3b;margin-bottom:4px;">Cloro corrosivo por pH bajo</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:#a07840;line-height:1.6;">Con pH inferior a 7.2 el cloro se vuelve extremadamente agresivo: provoca irritación en ojos y piel, corroe equipos metálicos y deteriora los materiales de la piscina. Añade incrementador de pH para corregir.</div>
+    </div>
+  </div>
+
+  <!-- pH > 8.0 warning banner -->
+  <div id="alkalineBanner" style="display:none;background:rgba(255,90,90,0.07);border:1px solid rgba(255,90,90,0.25);border-radius:12px;padding:14px 18px;margin-bottom:16px;display:none;align-items:flex-start;gap:12px;">
+    <span style="font-size:20px;line-height:1;flex-shrink:0">⚠️</span>
+    <div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#ff5a5a;margin-bottom:4px;">Cloro ineficaz por pH elevado</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:#a0606a;line-height:1.6;">Con pH superior a 8.0 el cloro pierde eficacia drásticamente. El agua puede volverse turbia y aparecer algas. Añade corrector de pH antes de ajustar el cloro.</div>
+    </div>
+  </div>
+
+  <!-- Cloro bajo banner -->
+  <div id="chloroBanner" style="display:none;background:rgba(50,180,255,0.06);border:1px solid rgba(50,180,255,0.22);border-radius:12px;padding:16px 18px;margin-bottom:16px;align-items:flex-start;gap:12px;">
+    <span style="font-size:20px;line-height:1;flex-shrink:0">🦠</span>
+    <div style="flex:1">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#32b4ff;margin-bottom:8px;">Nivel de cloro insuficiente — riesgo bacterias y algas</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:#4a7a99;line-height:1.7;margin-bottom:10px;">Por debajo de 1 ppm el poder desinfectante desaparece. El rango ideal es 1–1.5 ppm (hasta 3 ppm en picos de calor).</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:11px;color:#32b4ff;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Acciones correctivas</div>
+      <div style="display:flex;flex-direction:column;gap:5px;">
+        <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#4a7a99;line-height:1.6;display:flex;gap:8px;"><span style="color:#32b4ff;flex-shrink:0">01</span><span><strong style="color:#7ac8f0">Choque de cloro:</strong> Añadir cloro rápido granular diluido previamente para subir los niveles con rapidez.</span></div>
+        <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#4a7a99;line-height:1.6;display:flex;gap:8px;"><span style="color:#32b4ff;flex-shrink:0">02</span><span><strong style="color:#7ac8f0">Estabilizador (ácido cianúrico):</strong> Si es inferior a 30 ppm, el cloro se evapora con el sol. Nivel ideal: 30–70 ppm.</span></div>
+        <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#4a7a99;line-height:1.6;display:flex;gap:8px;"><span style="color:#32b4ff;flex-shrink:0">03</span><span><strong style="color:#7ac8f0">Horas de depuración:</strong> Aumentar el tiempo de filtrado para asegurar la correcta distribución del cloro.</span></div>
+        <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#4a7a99;line-height:1.6;display:flex;gap:8px;"><span style="color:#32b4ff;flex-shrink:0">04</span><span><strong style="color:#7ac8f0">Revisar el pH:</strong> Mantener entre 7.2 y 7.6. Con pH alto el cloro no desinfecta eficazmente.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cloro alto banner -->
+  <div id="chloroAltoBanner" style="display:none;background:rgba(255,90,50,0.06);border:1px solid rgba(255,90,50,0.22);border-radius:12px;padding:16px 18px;margin-bottom:16px;align-items:flex-start;gap:12px;">
+    <span style="font-size:20px;line-height:1;flex-shrink:0">☣️</span>
+    <div style="flex:1">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#ff6a32;margin-bottom:8px;">Nivel de cloro excesivo — irritación y olor fuerte</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:#99574a;line-height:1.7;margin-bottom:10px;">Por encima de 3–4 ppm provoca irritación en ojos y piel y olor intenso. No se recomienda el baño hasta reducir los niveles.</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:11px;color:#ff6a32;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Acciones para reducirlo</div>
+      <div style="display:flex;flex-direction:column;gap:5px;">
+        <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#99574a;line-height:1.6;display:flex;gap:8px;"><span style="color:#ff6a32;flex-shrink:0">01</span><span><strong style="color:#ffaa88">Detener la cloración:</strong> Parar el dosificador o retirar las pastillas hasta que los niveles bajen.</span></div>
+        <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#99574a;line-height:1.6;display:flex;gap:8px;"><span style="color:#ff6a32;flex-shrink:0">02</span><span><strong style="color:#ffaa88">Exposición al sol:</strong> La luz UV degrada el cloro de forma natural. Dejar la piscina sin cubrir durante horas de sol.</span></div>
+        <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#99574a;line-height:1.6;display:flex;gap:8px;"><span style="color:#ff6a32;flex-shrink:0">03</span><span><strong style="color:#ffaa88">Renovación parcial del agua:</strong> Sustituir entre un 10 % y un 30 % del agua de la piscina por agua limpia.</span></div>
+        <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#99574a;line-height:1.6;display:flex;gap:8px;"><span style="color:#ff6a32;flex-shrink:0">04</span><span><strong style="color:#ffaa88">Neutralizador:</strong> Usar tiosulfato de sodio para reducir el cloro rápidamente si es urgente.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart -->
+  <div class="chart-card">
+    <div class="chart-header">
+      <span class="chart-title">Mapa ORP / pH por concentración</span>
+      <div class="legend-row">
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(0,212,255,0.6)"></div>≤3 ppm</div>
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(255,209,102,0.6)"></div>3–7 ppm</div>
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(255,90,90,0.6)"></div>&gt;7 ppm</div>
+        <div class="legend-item"><div class="legend-dot" style="background:red;border-radius:50%"></div>Lectura</div>
+      </div>
+    </div>
+    <canvas id="grafico" height="340"></canvas>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Curves defined as {ppm, points:[{orp, ph}, ...]} digitized from Chemtrol reference chart
+// Axis: X = ORP (550–900), Y = pH (6.5–8.5)
+// Each curve bends: nearly vertical at high pH, curves right at lower pH
+const curvas = [
+  { ppm: 0.2,  pts: [{orp:560,ph:8.5},{orp:563,ph:8.0},{orp:570,ph:7.5},{orp:590,ph:7.0},{orp:620,ph:6.5}] },
+  { ppm: 0.6,  pts: [{orp:598,ph:8.5},{orp:602,ph:8.0},{orp:612,ph:7.5},{orp:635,ph:7.0},{orp:665,ph:6.5}] },
+  { ppm: 1.0,  pts: [{orp:625,ph:8.5},{orp:630,ph:8.0},{orp:642,ph:7.5},{orp:665,ph:7.0},{orp:698,ph:6.5}] },
+  { ppm: 2.0,  pts: [{orp:663,ph:8.5},{orp:668,ph:8.0},{orp:682,ph:7.5},{orp:707,ph:7.0},{orp:742,ph:6.5}] },
+  { ppm: 3.0,  pts: [{orp:693,ph:8.5},{orp:698,ph:8.0},{orp:713,ph:7.5},{orp:740,ph:7.0},{orp:776,ph:6.5}] },
+  { ppm: 5.0,  pts: [{orp:730,ph:8.5},{orp:736,ph:8.0},{orp:752,ph:7.5},{orp:780,ph:7.0},{orp:818,ph:6.5}] },
+  { ppm: 7.0,  pts: [{orp:758,ph:8.5},{orp:764,ph:8.0},{orp:781,ph:7.5},{orp:810,ph:7.0},{orp:848,ph:6.5}] },
+  { ppm: 10.0, pts: [{orp:793,ph:8.5},{orp:800,ph:8.0},{orp:818,ph:7.5},{orp:848,ph:7.0},{orp:888,ph:6.5}] }
+];
+
+// Interpolate pH for a given curve at a given ORP
+function phFromOrp(curve, orp){
+  const pts = curve.pts;
+  // pts are ordered by ascending orp
+  if(orp <= pts[0].orp) return pts[0].ph;
+  if(orp >= pts[pts.length-1].orp) return pts[pts.length-1].ph;
+  for(let i=0; i<pts.length-1; i++){
+    if(orp >= pts[i].orp && orp <= pts[i+1].orp){
+      const t = (orp - pts[i].orp) / (pts[i+1].orp - pts[i].orp);
+      return pts[i].ph + t * (pts[i+1].ph - pts[i].ph);
+    }
+  }
+  return pts[pts.length-1].ph;
+}
+
+// Interpolate ORP for a given curve at a given pH
+function orpFromPh(curve, ph){
+  const pts = curve.pts; // pts sorted ascending orp → descending ph
+  // ph goes from 8.5 (low orp) to 6.5 (high orp)
+  if(ph >= pts[0].ph) return pts[0].orp;
+  if(ph <= pts[pts.length-1].ph) return pts[pts.length-1].orp;
+  for(let i=0; i<pts.length-1; i++){
+    const phHi = pts[i].ph, phLo = pts[i+1].ph;
+    if(ph <= phHi && ph >= phLo){
+      const t = (phHi - ph) / (phHi - phLo);
+      return pts[i].orp + t * (pts[i+1].orp - pts[i].orp);
+    }
+  }
+  return pts[pts.length-1].orp;
+}
+
+// Estimate PPM from pH and ORP by interpolating between curves
+function calcularPPM(ph, orp){
+  // For each curve, get the ORP value at this pH
+  const vals = curvas.map(c => ({ ppm: c.ppm, orp: orpFromPh(c, ph) }));
+  // vals sorted by ascending orp (= ascending ppm)
+  for(let i=0; i<vals.length-1; i++){
+    if(orp >= vals[i].orp && orp <= vals[i+1].orp){
+      const t = (orp - vals[i].orp) / (vals[i+1].orp - vals[i].orp);
+      return vals[i].ppm + t * (vals[i+1].ppm - vals[i].ppm);
+    }
+  }
+  if(orp < vals[0].orp) return vals[0].ppm;
+  return vals[vals.length-1].ppm;
+}
+
+// Build chart data: each curve is a line on scatter chart (x=ORP, y=pH)
+// Generate dense points per curve by interpolating along pH axis
+function buildCurvePoints(curve){
+  const points = [];
+  for(let ph = 8.5; ph >= 6.5; ph -= 0.02){
+    const orp = orpFromPh(curve, Number(ph.toFixed(2)));
+    points.push({ x: orp, y: Number(ph.toFixed(2)) });
+  }
+  return points;
+}
+
+function colorZona(ppm){
+  if(ppm <= 3)  return 'rgba(0,212,255,0.10)';
+  if(ppm <= 7)  return 'rgba(255,209,102,0.13)';
+  return 'rgba(255,90,90,0.13)';
+}
+function borderZona(ppm){
+  if(ppm <= 3)  return 'rgba(0,212,255,0.5)';
+  if(ppm <= 7)  return 'rgba(255,209,102,0.55)';
+  return 'rgba(255,90,90,0.55)';
+}
+
+const datasets = [];
+
+// Add label annotations via a custom plugin approach — 
+// For now add all curves as scatter lines
+for(let i=0; i<curvas.length; i++){
+  const c = curvas[i];
+  datasets.push({
+    label: `${c.ppm} ppm`,
+    data: buildCurvePoints(c),
+    borderColor: borderZona(c.ppm),
+    backgroundColor: 'transparent',
+    showLine: true,
+    tension: 0.4,
+    pointRadius: 0,
+    borderWidth: 1.5,
+    fill: false
+  });
+}
+
+// Current reading dot
+datasets.push({
+  label: 'Lectura actual',
+  data: [{x: 750, y: 7.5}],
+  borderColor: '#ff3b5c',
+  backgroundColor: '#ff3b5c',
+  pointRadius: 9,
+  pointHoverRadius: 12,
+  showLine: false,
+  pointStyle: 'circle',
+  borderWidth: 2
+});
+
+// PPM label plugin
+const ppmLabelPlugin = {
+  id: 'ppmLabels',
+  afterDraw(chart){
+    const {ctx, chartArea, scales} = chart;
+    const xScale = scales.x, yScale = scales.y;
+    ctx.save();
+    ctx.font = "bold 10px 'DM Mono', monospace";
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    curvas.forEach((c, i) => {
+      // Place label at top of curve (pH=8.5)
+      const orp = orpFromPh(c, 8.5);
+      const px = xScale.getPixelForValue(orp);
+      const py = yScale.getPixelForValue(8.5);
+      if(px >= chartArea.left && px <= chartArea.right){
+        ctx.fillStyle = borderZona(c.ppm);
+        ctx.fillText(c.ppm, px, py - 4);
+      }
+    });
+    ctx.restore();
+  }
+};
+
+const ctx = document.getElementById('grafico').getContext('2d');
+const grafico = new Chart(ctx, {
+  type: 'scatter',
+  data: { datasets: datasets },
+  plugins: [ppmLabelPlugin],
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: { duration: 120 },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        filter: item => item.datasetIndex === datasets.length - 1,
+        backgroundColor: 'rgba(17,19,24,0.95)',
+        titleColor: '#5a6070',
+        bodyColor: '#e8eaf0',
+        borderColor: 'rgba(255,255,255,0.1)',
+        borderWidth: 1,
+        titleFont: { family: "'DM Mono', monospace", size: 11 },
+        bodyFont:  { family: "'DM Mono', monospace", size: 12 },
+        callbacks: {
+          label: item => `ORP: ${item.parsed.x} mV  pH: ${item.parsed.y.toFixed(2)}`
+        }
+      }
+    },
+    scales: {
+      x: {
+        type: 'linear',
+        min: 550, max: 900,
+        title: { display: true, text: 'ORP (mV)', color: '#5a6070', font: { family: "'Syne', sans-serif", size: 12, weight: '700' } },
+        grid: { color: 'rgba(255,255,255,0.04)' },
+        ticks: { color: '#5a6070', font: { family: "'DM Mono', monospace", size: 10 }, stepSize: 50 },
+        border: { color: 'rgba(255,255,255,0.06)' }
+      },
+      y: {
+        min: 6.5, max: 8.5,
+        title: { display: true, text: 'pH', color: '#5a6070', font: { family: "'Syne', sans-serif", size: 12, weight: '700' } },
+        grid: { color: 'rgba(255,255,255,0.04)' },
+        ticks: { color: '#5a6070', font: { family: "'DM Mono', monospace", size: 10 }, stepSize: 0.5 },
+        border: { color: 'rgba(255,255,255,0.06)' }
+      }
+    }
+  }
+});
+
+const phInput  = document.getElementById('ph');
+const orpInput = document.getElementById('orp');
+const phVal    = document.getElementById('phVal');
+const orpVal   = document.getElementById('orpVal');
+const resultado = document.getElementById('resultado');
+const statusPill = document.getElementById('statusPill');
+const phPill = document.getElementById('phPill');
+
+function getPhStatus(ph){
+  if(ph <= 6.5) return { text:'⚠ Agua ácida', color:'#ff5a5a', bg:'rgba(255,90,90,0.08)', border:'rgba(255,90,90,0.3)' };
+  if(ph < 7.2)  return { text:'Agua ligeramente ácida', color:'var(--warn)', bg:'rgba(255,209,102,0.08)', border:'rgba(255,209,102,0.25)' };
+  if(ph <= 7.6) return null;
+  if(ph <= 8.0) return { text:'Agua ligeramente alcalina', color:'var(--warn)', bg:'rgba(255,209,102,0.08)', border:'rgba(255,209,102,0.25)' };
+  return { text:'⚠ Cloro ineficaz — pH > 8.0', color:'#ff5a5a', bg:'rgba(255,90,90,0.08)', border:'rgba(255,90,90,0.3)' };
+}
+
+function getStatus(ppm){
+  if(ppm < 0) return { text:'Bajo detección', color:'var(--muted)', bg:'rgba(90,96,112,0.1)', border:'rgba(90,96,112,0.2)' };
+  if(ppm <= 1) return { text:'Muy bajo', color:'var(--accent)', bg:'rgba(0,212,255,0.08)', border:'rgba(0,212,255,0.2)' };
+  if(ppm <= 3) return { text:'Óptimo', color:'var(--accent2)', bg:'rgba(127,255,106,0.08)', border:'rgba(127,255,106,0.2)' };
+  if(ppm <= 5) return { text:'Elevado', color:'var(--warn)', bg:'rgba(255,209,102,0.08)', border:'rgba(255,209,102,0.2)' };
+  if(ppm <= 7) return { text:'Alto', color:'var(--warn)', bg:'rgba(255,209,102,0.08)', border:'rgba(255,209,102,0.2)' };
+  return { text:'Muy alto', color:'var(--danger)', bg:'rgba(255,90,90,0.08)', border:'rgba(255,90,90,0.2)' };
+}
+
+function getResultColor(ppm){
+  if(ppm <= 3) return 'var(--accent)';
+  if(ppm <= 7) return 'var(--warn)';
+  return 'var(--danger)';
+}
+
+// Slider progress fill
+function updateTrack(input, min, max){
+  const val = (input.value - min) / (max - min) * 100;
+  input.style.background = `linear-gradient(to right, var(--accent) ${val}%, var(--surface2) ${val}%)`;
+}
+
+function update(){
+  const ph  = +phInput.value;
+  const orp = +orpInput.value;
+  phVal.innerText  = ph.toFixed(2);
+  orpVal.innerText = orp;
+
+  updateTrack(phInput,  6.5, 8.5);
+  updateTrack(orpInput, 550, 950);
+
+  const ppm = calcularPPM(ph, orp);
+  resultado.innerText = ppm.toFixed(2);
+  resultado.style.color = getResultColor(ppm);
+
+  const st = getStatus(ppm);
+  statusPill.innerText = '';
+  statusPill.textContent = st.text;
+  // rebuild dot
+  statusPill.innerHTML = `<span style="width:8px;height:8px;border-radius:50%;background:${st.color};box-shadow:0 0 8px ${st.color};flex-shrink:0;display:inline-block"></span>${st.text}`;
+  statusPill.style.color  = st.color;
+  statusPill.style.background = st.bg;
+  statusPill.style.borderColor = st.border;
+
+  // Cloro bajo banner
+  const chloroBanner = document.getElementById('chloroBanner');
+  chloroBanner.style.display = ppm < 1 ? 'flex' : 'none';
+
+  // Cloro alto banner
+  const chloroAltoBanner = document.getElementById('chloroAltoBanner');
+  chloroAltoBanner.style.display = ppm > 3 ? 'flex' : 'none';
+
+  // pH < 7.2 acid banner
+  const acidBanner = document.getElementById('acidBanner');
+  acidBanner.style.display = ph < 7.2 ? 'flex' : 'none';
+
+  // pH > 8.0 alkaline banner
+  const banner = document.getElementById('alkalineBanner');
+  banner.style.display = ph > 8.0 ? 'flex' : 'none';
+
+  // pH alert pill
+  const phSt = getPhStatus(ph);
+  if(phSt){
+    phPill.style.display = 'flex';
+    phPill.innerHTML = `<span style="width:8px;height:8px;border-radius:50%;background:${phSt.color};box-shadow:0 0 8px ${phSt.color};flex-shrink:0;display:inline-block"></span>${phSt.text}`;
+    phPill.style.color = phSt.color;
+    phPill.style.background = phSt.bg;
+    phPill.style.borderColor = phSt.border;
+  } else {
+    phPill.style.display = 'none';
+  }
+  grafico.data.datasets[grafico.data.datasets.length - 1].data = [{x: orp, y: ph}];
+  grafico.update('none');
+}
+
+phInput.oninput  = update;
+orpInput.oninput = update;
+update();
+</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(r => console.log('SW registrado:', r.scope))
+      .catch(e => console.log('SW error:', e));
+  });
+}
+</script>
+</body>
+</html>
