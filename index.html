@@ -22,13 +22,20 @@
     --h1-grad-end:#006699;
   }
   @media(prefers-color-scheme:dark){
-    :root{
+    :root:not([data-theme="light"]){
       --bg:#0a0c10;--surface:#111318;--surface2:#181c24;
       --border:rgba(255,255,255,0.07);--text:#e8eaf0;--muted:#5a6070;
       --accent:#00d4ff;--accent2:#7fff6a;--warn:#ffd166;--danger:#ff5a5a;
       --grid-line:rgba(0,212,255,0.03);
       --h1-grad-end:#a0f0ff;
     }
+  }
+  [data-theme="dark"]{
+    --bg:#0a0c10;--surface:#111318;--surface2:#181c24;
+    --border:rgba(255,255,255,0.07);--text:#e8eaf0;--muted:#5a6070;
+    --accent:#00d4ff;--accent2:#7fff6a;--warn:#ffd166;--danger:#ff5a5a;
+    --grid-line:rgba(0,212,255,0.03);
+    --h1-grad-end:#a0f0ff;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;padding:24px 16px 60px;position:relative;overflow-x:hidden;transition:background 0.3s,color 0.3s;}
@@ -46,24 +53,33 @@
   .mode-btn.active{border-color:var(--accent);background:rgba(0,153,204,0.07);}
   .mode-btn.active.electro{border-color:#7c3aed;background:rgba(124,58,237,0.07);}
   @media(prefers-color-scheme:dark){
-    .mode-btn:hover{border-color:rgba(0,212,255,0.2);}
-    .mode-btn.active{background:rgba(0,212,255,0.06);}
-    .mode-btn.active.electro{border-color:#a78bfa;background:rgba(167,139,250,0.06);}
+    :root:not([data-theme="light"]) .mode-btn:hover{border-color:rgba(0,212,255,0.2);}
+    :root:not([data-theme="light"]) .mode-btn.active{background:rgba(0,212,255,0.06);}
+    :root:not([data-theme="light"]) .mode-btn.active.electro{border-color:#a78bfa;background:rgba(167,139,250,0.06);}
   }
+  [data-theme="dark"] .mode-btn:hover{border-color:rgba(0,212,255,0.2);}
+  [data-theme="dark"] .mode-btn.active{background:rgba(0,212,255,0.06);}
+  [data-theme="dark"] .mode-btn.active.electro{border-color:#a78bfa;background:rgba(167,139,250,0.06);}
   .mode-icon{font-size:20px;margin-bottom:6px;display:block;}
   .mode-name{font-family:var(--sans);font-size:13px;font-weight:700;color:var(--text);display:block;margin-bottom:2px;}
   .mode-desc{font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.4;}
   .mode-btn.active .mode-name{color:var(--accent);}
   .mode-btn.active.electro .mode-name{color:#7c3aed;}
   @media(prefers-color-scheme:dark){
-    .mode-btn.active.electro .mode-name{color:#a78bfa;}
+    :root:not([data-theme="light"]) .mode-btn.active.electro .mode-name{color:#a78bfa;}
   }
+  [data-theme="dark"] .mode-btn.active.electro .mode-name{color:#a78bfa;}
+  /* Theme toggle */
+  .theme-toggle{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:16px;line-height:1;color:var(--text);transition:all 0.2s;}
+  .theme-toggle:hover{border-color:rgba(0,153,204,0.3);}
   .mode-tag{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:4px;border:1px solid rgba(0,153,204,0.35);color:var(--accent);background:rgba(0,153,204,0.07);display:inline-block;margin-bottom:16px;}
   .mode-tag.electro{border-color:rgba(124,58,237,0.35);color:#7c3aed;background:rgba(124,58,237,0.07);}
   @media(prefers-color-scheme:dark){
-    .mode-tag{border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.06);}
-    .mode-tag.electro{border-color:rgba(167,139,250,0.3);color:#a78bfa;background:rgba(167,139,250,0.06);}
+    :root:not([data-theme="light"]) .mode-tag{border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.06);}
+    :root:not([data-theme="light"]) .mode-tag.electro{border-color:rgba(167,139,250,0.3);color:#a78bfa;background:rgba(167,139,250,0.06);}
   }
+  [data-theme="dark"] .mode-tag{border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.06);}
+  [data-theme="dark"] .mode-tag.electro{border-color:rgba(167,139,250,0.3);color:#a78bfa;background:rgba(167,139,250,0.06);}
 
   /* Hero */
   .hero{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 32px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;}
@@ -72,8 +88,9 @@
   .result-value{font-family:var(--mono);font-size:clamp(40px,8vw,72px);font-weight:300;line-height:1;color:var(--accent);transition:color 0.4s ease;letter-spacing:-2px;}
   .status-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:100px;font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:0.5px;background:rgba(0,153,204,0.08);color:var(--accent);border:1px solid rgba(0,153,204,0.25);transition:all 0.4s ease;}
   @media(prefers-color-scheme:dark){
-    .status-pill{background:rgba(0,212,255,0.1);border-color:rgba(0,212,255,0.2);}
+    :root:not([data-theme="light"]) .status-pill{background:rgba(0,212,255,0.1);border-color:rgba(0,212,255,0.2);}
   }
+  [data-theme="dark"] .status-pill{background:rgba(0,212,255,0.1);border-color:rgba(0,212,255,0.2);}
 
   /* Sliders */
   .sliders-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
@@ -81,8 +98,9 @@
   .slider-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 24px;transition:border-color 0.2s;}
   .slider-card:hover{border-color:rgba(0,153,204,0.3);}
   @media(prefers-color-scheme:dark){
-    .slider-card:hover{border-color:rgba(0,212,255,0.2);}
+    :root:not([data-theme="light"]) .slider-card:hover{border-color:rgba(0,212,255,0.2);}
   }
+  [data-theme="dark"] .slider-card:hover{border-color:rgba(0,212,255,0.2);}
   .slider-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;}
   .slider-name{font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
   .slider-value{font-family:var(--mono);font-size:28px;font-weight:300;color:var(--text);letter-spacing:-1px;line-height:1;}
@@ -92,10 +110,13 @@
   input[type=range]:hover::-webkit-slider-thumb{transform:scale(1.2);box-shadow:0 0 14px rgba(0,153,204,0.6);}
   input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(0,153,204,0.4);cursor:pointer;}
   @media(prefers-color-scheme:dark){
-    input[type=range]::-webkit-slider-thumb{box-shadow:0 0 10px rgba(0,212,255,0.5);}
-    input[type=range]:hover::-webkit-slider-thumb{box-shadow:0 0 16px rgba(0,212,255,0.7);}
-    input[type=range]::-moz-range-thumb{box-shadow:0 0 10px rgba(0,212,255,0.5);}
+    :root:not([data-theme="light"]) input[type=range]::-webkit-slider-thumb{box-shadow:0 0 10px rgba(0,212,255,0.5);}
+    :root:not([data-theme="light"]) input[type=range]:hover::-webkit-slider-thumb{box-shadow:0 0 16px rgba(0,212,255,0.7);}
+    :root:not([data-theme="light"]) input[type=range]::-moz-range-thumb{box-shadow:0 0 10px rgba(0,212,255,0.5);}
   }
+  [data-theme="dark"] input[type=range]::-webkit-slider-thumb{box-shadow:0 0 10px rgba(0,212,255,0.5);}
+  [data-theme="dark"] input[type=range]:hover::-webkit-slider-thumb{box-shadow:0 0 16px rgba(0,212,255,0.7);}
+  [data-theme="dark"] input[type=range]::-moz-range-thumb{box-shadow:0 0 10px rgba(0,212,255,0.5);}
   .slider-range-labels{display:flex;justify-content:space-between;margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--muted);}
 
   /* Chart */
@@ -116,7 +137,10 @@
       <h1>Cloro Libre</h1>
       <p>Calculadora pH · ORP → ppm</p>
     </div>
-    <div class="badge">Valentin Somni</div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button class="theme-toggle" id="themeToggle" title="Cambiar tema">☀️</button>
+      <div class="badge">Valentin Somni</div>
+    </div>
   </header>
 
   <div class="mode-selector">
@@ -528,6 +552,24 @@ function update(){
   grafico.data.datasets[grafico.data.datasets.length-1].data=[{x:orp,y:ph}];
   grafico.update('none');
 }
+
+// ── THEME TOGGLE ─────────────────────────────────────────────
+(function(){
+  const html=document.documentElement;
+  const btn=document.getElementById('themeToggle');
+  const prefersDark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+  let isDark=localStorage.getItem('theme')==='dark'||(localStorage.getItem('theme')===null&&prefersDark);
+  function applyTheme(){
+    html.setAttribute('data-theme',isDark?'dark':'light');
+    btn.textContent=isDark?'☀️':'🌙';
+  }
+  applyTheme();
+  btn.addEventListener('click',()=>{
+    isDark=!isDark;
+    localStorage.setItem('theme',isDark?'dark':'light');
+    applyTheme();
+  });
+})();
 
 phInput.oninput=update; orpInput.oninput=update;
 document.getElementById('btnHipo').addEventListener('click', () => setMode('hipoclorito'));
