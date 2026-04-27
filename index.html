@@ -178,7 +178,11 @@
         <span class="slider-name">pH</span>
         <div><span class="slider-value" id="phVal">7.5</span></div>
       </div>
-      <input type="range" min="6.5" max="8.5" step="0.05" value="7.5" id="ph">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <button onclick="adjustPh(-0.1)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">−</button>
+        <input type="range" min="6.5" max="8.5" step="0.01" value="7.5" id="ph" style="flex:1;">
+        <button onclick="adjustPh(0.1)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">+</button>
+      </div>
       <div class="slider-range-labels"><span>6.5</span><span>8.5</span></div>
     </div>
     <div class="slider-card">
@@ -186,7 +190,11 @@
         <span class="slider-name">ORP</span>
         <div><span class="slider-value" id="orpVal">750</span><span class="slider-unit">mV</span></div>
       </div>
-      <input type="range" min="550" max="950" step="1" value="750" id="orp">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <button onclick="adjustOrp(-5)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">−</button>
+        <input type="range" min="550" max="950" step="1" value="750" id="orp" style="flex:1;">
+        <button onclick="adjustOrp(5)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">+</button>
+      </div>
       <div class="slider-range-labels" id="orpLabels"><span>550 mV</span><span>950 mV</span></div>
     </div>
   </div>
@@ -572,6 +580,18 @@ function update(){
 })();
 
 phInput.oninput=update; orpInput.oninput=update;
+
+function adjustPh(delta){
+  const v = Math.round((+phInput.value + delta) * 100) / 100;
+  phInput.value = Math.min(8.5, Math.max(6.5, v));
+  update();
+}
+function adjustOrp(delta){
+  const m = modos[modoActual];
+  const v = Math.round(+orpInput.value + delta);
+  orpInput.value = Math.min(m.orpMax, Math.max(m.orpMin, v));
+  update();
+}
 document.getElementById('btnHipo').addEventListener('click', () => setMode('hipoclorito'));
 document.getElementById('btnElectro').addEventListener('click', () => setMode('electrolisis'));
 update();
