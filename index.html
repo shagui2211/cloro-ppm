@@ -13,73 +13,69 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link href="https://googleapis.com" rel="stylesheet">
 <style>
- :root {
- --bg:#ffffff;--surface:#f4f6fa;--surface2:#e8ecf4;
- --border:rgba(0,0,0,0.09);--text:#1a1d26;--muted:#6b7280;
- --accent:#0099cc;--accent2:#16a34a;--warn:#d97706;--danger:#dc2626;
- --mono:'DM Mono',monospace;--sans:'Syne',sans-serif;
- --grid-line:rgba(0,153,204,0.04);
- --h1-grad-end:#006699;
- }
- @media(prefers-color-scheme:dark){
- :root:not([data-theme="light"]){
- --bg:#0a0c10;--surface:#111318;--surface2:#181c24;
- --border:rgba(255,255,255,0.07);--text:#e8eaf0;--muted:#5a6070;
- --accent:#00d4ff;--accent2:#7fff6a;--warn:#ffd166;--danger:#ff5a5a;
- --grid-line:rgba(0,212,255,0.03);
- --h1-grad-end:#a0f0ff;
- }
- }
- [data-theme="dark"]{
- --bg:#0a0c10;--surface:#111318;--surface2:#181c24;
- --border:rgba(255,255,255,0.07);--text:#e8eaf0;--muted:#5a6070;
- --accent:#00d4ff;--accent2:#7fff6a;--warn:#ffd166;--danger:#ff5a5a;
- --grid-line:rgba(0,212,255,0.03);
- --h1-grad-end:#a0f0ff;
- }
- *{box-sizing:border-box;margin:0;padding:0;}
- body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;padding:24px 16px 60px;position:relative;overflow-x:hidden;transition:background 0.3s,color 0.3s;}
- body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
- .container{max-width:860px;margin:0 auto;position:relative;z-index:1;}
- header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border);}
- .header-left h1{font-size:clamp(28px,5vw,44px);font-weight:800;letter-spacing:-1px;line-height:1;background:linear-gradient(120deg,var(--accent),var(--h1-grad-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
- .header-left p{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:6px;}
- .badge{font-family:var(--mono);font-size:11px;padding:5px 10px;border:1px solid var(--border);border-radius:4px;color:var(--muted);letter-spacing:1px;}
- 
- .mode-selector{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
- .mode-btn{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all 0.2s;text-align:left;width:100%;}
- .mode-btn:hover{border-color:rgba(0,153,204,0.3);}
- .mode-btn.active{border-color:var(--accent);background:rgba(0,153,204,0.07);}
- .mode-btn.active.electro{border-color:#7c3aed;background:rgba(124,58,237,0.07);}
- 
- .theme-toggle{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:16px;line-height:1;color:var(--text);transition:all 0.2s;}
- .mode-tag{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:4px;border:1px solid rgba(0,153,204,0.35);color:var(--accent);background:rgba(0,153,204,0.07);display:inline-block;margin-bottom:16px;}
- .mode-tag.electro{border-color:rgba(124,58,237,0.35);color:#7c3aed;background:rgba(124,58,237,0.07);}
-
- .hero{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 32px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;}
- .result-block{display:flex;flex-direction:column;gap:4px;}
- .result-label{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
- .result-value{font-family:var(--mono);font-size:clamp(40px,8vw,72px);font-weight:300;line-height:1;color:var(--accent);transition:color 0.4s ease;letter-spacing:-2px;}
- .status-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:100px;font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:0.5px;background:rgba(0,153,204,0.08);color:var(--accent);border:1px solid rgba(0,153,204,0.25);transition:all 0.4s ease;}
-
- .sliders-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
- @media(max-width:560px){.sliders-grid{grid-template-columns:1fr;}}
- .slider-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 24px;transition:border-color 0.2s;}
- .slider-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;}
- .slider-name{font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
- .slider-value{font-family:var(--mono);font-size:28px;font-weight:300;color:var(--text);letter-spacing:-1px;line-height:1;}
- .slider-unit{font-size:13px;color:var(--muted);margin-left:2px;}
- 
- input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:2px;background:var(--surface2);outline:none;cursor:pointer;}
- input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(0,153,204,0.4);transition:transform 0.15s,box-shadow 0.15s;}
- 
- .chart-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;}
- .temp-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin-bottom:16px;transition:border-color 0.2s;}
- .temp-badge{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:4px;display:inline-block;margin-left:8px;vertical-align:middle;transition:all 0.3s;}
- .mode-icon { font-size: 20px; display: block; margin-bottom: 5px; }
- .mode-name { font-weight: 800; font-size: 14px; display: block; }
- .mode-desc { font-size: 10px; color: var(--muted); font-family: var(--mono); }
- .slider-range-labels { display: flex; justify-content: space-between; margin-top: 10px; font-family: var(--mono); font-size: 10px; color: var(--muted); }
+  :root {
+    --bg:#ffffff;--surface:#f4f6fa;--surface2:#e8ecf4;
+    --border:rgba(0,0,0,0.09);--text:#1a1d26;--muted:#6b7280;
+    --accent:#0099cc;--accent2:#16a34a;--warn:#d97706;--danger:#dc2626;
+    --mono:'DM Mono',monospace;--sans:'Syne',sans-serif;
+    --grid-line:rgba(0,153,204,0.04);
+    --h1-grad-end:#006699;
+  }
+  @media(prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#0a0c10;--surface:#111318;--surface2:#181c24;
+      --border:rgba(255,255,255,0.07);--text:#e8eaf0;--muted:#5a6070;
+      --accent:#00d4ff;--accent2:#7fff6a;--warn:#ffd166;--danger:#ff5a5a;
+      --grid-line:rgba(0,212,255,0.03);
+      --h1-grad-end:#a0f0ff;
+    }
+  }
+  [data-theme="dark"]{
+    --bg:#0a0c10;--surface:#111318;--surface2:#181c24;
+    --border:rgba(255,255,255,0.07);--text:#e8eaf0;--muted:#5a6070;
+    --accent:#00d4ff;--accent2:#7fff6a;--warn:#ffd166;--danger:#ff5a5a;
+    --grid-line:rgba(0,212,255,0.03);
+    --h1-grad-end:#a0f0ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;padding:24px 16px 60px;position:relative;overflow-x:hidden;transition:background 0.3s,color 0.3s;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+  .container{max-width:860px;margin:0 auto;position:relative;z-index:1;}
+  header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+  .header-left h1{font-size:clamp(28px,5vw,44px);font-weight:800;letter-spacing:-1px;line-height:1;background:linear-gradient(120deg,var(--accent),var(--h1-grad-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .header-left p{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:6px;}
+  .badge{font-family:var(--mono);font-size:11px;padding:5px 10px;border:1px solid var(--border);border-radius:4px;color:var(--muted);letter-spacing:1px;}
+  .mode-selector{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+  .mode-btn{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all 0.2s;text-align:left;width:100%;}
+  .mode-btn.active{border-color:var(--accent);background:rgba(0,153,204,0.07);}
+  .mode-btn.active.electro{border-color:#7c3aed;background:rgba(124,58,237,0.07);}
+  .mode-icon{font-size:20px;margin-bottom:6px;display:block;}
+  .mode-name{font-family:var(--sans);font-size:13px;font-weight:700;color:var(--text);display:block;margin-bottom:2px;}
+  .mode-desc{font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.4;}
+  .theme-toggle{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:16px;line-height:1;color:var(--text);transition:all 0.2s;}
+  .mode-tag{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:4px;border:1px solid rgba(0,153,204,0.35);color:var(--accent);background:rgba(0,153,204,0.07);display:inline-block;margin-bottom:16px;}
+  .mode-tag.electro{border-color:rgba(124,58,237,0.35);color:#7c3aed;background:rgba(124,58,237,0.07);}
+  .hero{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 32px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  .result-block{display:flex;flex-direction:column;gap:4px;}
+  .result-label{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+  .result-value{font-family:var(--mono);font-size:clamp(40px,8vw,72px);font-weight:300;line-height:1;color:var(--accent);transition:color 0.4s ease;letter-spacing:-2px;}
+  .status-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:100px;font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:0.5px;background:rgba(0,153,204,0.08);color:var(--accent);border:1px solid rgba(0,153,204,0.25);transition:all 0.4s ease;}
+  .sliders-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+  @media(max-width:560px){.sliders-grid{grid-template-columns:1fr;}}
+  .slider-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 24px;transition:border-color 0.2s;}
+  .slider-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;}
+  .slider-name{font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+  .slider-value{font-family:var(--mono);font-size:28px;font-weight:300;color:var(--text);letter-spacing:-1px;line-height:1;}
+  .slider-unit{font-size:13px;color:var(--muted);margin-left:2px;}
+  input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:2px;background:var(--surface2);outline:none;cursor:pointer;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(0,153,204,0.4);transition:transform 0.15s,box-shadow 0.15s;}
+  .chart-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;}
+  .chart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
+  .chart-title{font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+  .temp-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin-bottom:16px;transition:border-color 0.2s;}
+  .temp-badge{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:4px;border:1px solid var(--temp-border,rgba(249,115,22,0.4));color:var(--temp-color,#f97316);background:var(--temp-bg,rgba(249,115,22,0.07));display:inline-block;margin-left:8px;vertical-align:middle;transition:all 0.3s;}
+  .slider-range-labels{display:flex;justify-content:space-between;margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--muted);}
+  canvas#grafico{width:100%!important;height:340px!important;}
 </style>
 </head>
 <body>
@@ -99,16 +95,16 @@
  <button class="mode-btn active" id="btnHipo">
  <span class="mode-icon">🧴</span>
  <span class="mode-name">Hipoclorito</span>
- <span class="mode-desc">Cloro líquido · granular</span>
+ <span class="mode-desc">Cloro líquido · pastillas · granular</span>
  </button>
- <button class="mode-btn" id="btnElectro">
+ <button class="mode-btn electro" id="btnElectro">
  <span class="mode-icon">⚡</span>
  <span class="mode-name">Electrólisis</span>
- <span class="mode-desc">Cloración Salina</span>
+ <span class="mode-desc">Salina · clorador electrolítico</span>
  </button>
  </div>
 
- <div class="mode-tag" id="modeTag">Hipoclorito sódico — ORP 550–900 mV</div>
+ <div class="mode-tag" id="modeTag">Hipoclorito sódico — ORP 550–900 mV · ppm ideal 1–3</div>
 
  <div class="hero">
  <div class="result-block">
@@ -128,13 +124,14 @@
  <div class="slider-card">
  <div class="slider-header">
  <span class="slider-name">pH</span>
- <div><span class="slider-value" id="phVal">7.50</span></div>
+ <div><span class="slider-value" id="phVal">7.5</span></div>
  </div>
  <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
- <button onclick="adjustPh(-0.05)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:32px;height:32px;cursor:pointer;">−</button>
+ <button onclick="adjustPh(-0.1)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;">−</button>
  <input type="range" min="6.5" max="8.5" step="0.01" value="7.5" id="ph" style="flex:1;">
- <button onclick="adjustPh(0.05)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:32px;height:32px;cursor:pointer;">+</button>
+ <button onclick="adjustPh(0.1)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;">+</button>
  </div>
+ <div class="slider-range-labels"><span>6.5</span><span>8.5</span></div>
  </div>
 
  <div class="slider-card">
@@ -143,54 +140,62 @@
  <div><span class="slider-value" id="orpVal">750</span><span class="slider-unit">mV</span></div>
  </div>
  <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
- <button onclick="adjustOrp(-5)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:32px;height:32px;cursor:pointer;">−</button>
+ <button onclick="adjustOrp(-5)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;">−</button>
  <input type="range" min="550" max="950" step="1" value="750" id="orp" style="flex:1;">
- <button onclick="adjustOrp(5)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:32px;height:32px;cursor:pointer;">+</button>
+ <button onclick="adjustOrp(5)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;">+</button>
  </div>
+ <div class="slider-range-labels" id="orpLabels"><span>550 mV</span><span>950 mV</span></div>
  </div>
  </div>
 
- <!-- Temperatura corregida con paso 0.1 -->
+ <!-- Sección Temperatura Corregida -->
  <div class="temp-card" id="tempCard">
  <div class="slider-header">
  <div style="display:flex;align-items:center;gap:6px;">
- <span class="slider-name">🌡 Temperatura</span>
+ <span class="slider-name">🌡 Temperatura del agua</span>
  <span class="temp-badge" id="tempBadge">templada</span>
  </div>
  <div>
- <span class="slider-value" id="tempVal">24.0</span>
+ <span class="slider-value" id="tempVal" style="color:var(--temp-color,#f97316);">24.0</span>
  <span class="slider-unit">°C</span>
  </div>
  </div>
  <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
- <button onclick="adjustTemp(-0.5)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:32px;height:32px;cursor:pointer;">−</button>
+ <button onclick="adjustTemp(-0.1)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;">−</button>
  <input type="range" class="temp-range" min="10" max="40" step="0.1" value="24.0" id="tempInput" style="flex:1;">
- <button onclick="adjustTemp(0.5)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:32px;height:32px;cursor:pointer;">+</button>
+ <button onclick="adjustTemp(0.1)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;">+</button>
  </div>
- <div id="tempCorrection" style="font-family:var(--mono);font-size:10px;color:var(--muted);">
- Corrección Nernst: <span id="tempCorrVal" style="color:var(--accent);">0.0 mV</span>
- </div>
+ <div class="slider-range-labels"><span>10 °C</span><span style="color:#f59e0b">24 °C óptima</span><span style="color:#dc2626">40 °C</span></div>
+ <div style="margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--muted);" id="tempCorrection">Corrección ORP: <span id="tempCorrVal" style="color:var(--accent);">0 mV</span></div>
  </div>
 
- <!-- Banners Dinámicos -->
- <div id="tempBanner" style="display:none;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.3);border-radius:12px;padding:15px;margin-bottom:16px;">
- <span style="font-size:20px;margin-right:10px">🔥</span>
- <span id="tempBannerDesc" style="font-size:11px;font-family:var(--mono)"></span>
+ <!-- Banners -->
+ <div id="tempBanner" style="display:none;background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.25);border-radius:12px;padding:14px;margin-bottom:16px;gap:12px;">
+ <div><div style="font-weight:700;font-size:13px;color:#ea580c;">Agua caliente — mayor consumo</div><div style="font-family:var(--mono);font-size:11px;color:#7c4a1e;" id="tempBannerDesc"></div></div>
+ </div>
+
+ <div id="chloroBanner" style="display:none;background:rgba(0,153,204,0.06);border:1px solid rgba(0,153,204,0.22);border-radius:12px;padding:16px;margin-bottom:16px;">
+ <div style="font-weight:700;color:#0077aa;font-size:13px;">Nivel de cloro insuficiente</div>
+ <div style="font-family:var(--mono);font-size:11px;color:#336688;" id="chloroBajoDesc"></div>
+ <div id="chloroBajoAcciones" style="margin-top:8px;"></div>
  </div>
 
  <div class="chart-card">
- <canvas id="grafico" height="300"></canvas>
+ <div class="chart-header">
+ <span class="chart-title" id="chartTitle">Mapa ORP / pH — Hipoclorito</span>
+ </div>
+ <canvas id="grafico"></canvas>
  </div>
 </div>
 
 <script src="https://jsdelivr.net"></script>
 <script>
-// --- DATOS Y LOGICA ---
+// --- CURVAS E INTERPOLACIÓN ---
 const curvasHipo = [
  {ppm:0.2, pts:[{orp:560,ph:8.5},{orp:563,ph:8.0},{orp:570,ph:7.5},{orp:590,ph:7.0},{orp:620,ph:6.5}]},
  {ppm:1.0, pts:[{orp:625,ph:8.5},{orp:630,ph:8.0},{orp:642,ph:7.5},{orp:665,ph:7.0},{orp:698,ph:6.5}]},
  {ppm:3.0, pts:[{orp:693,ph:8.5},{orp:698,ph:8.0},{orp:713,ph:7.5},{orp:740,ph:7.0},{orp:776,ph:6.5}]},
- {ppm:5.0, pts:[{orp:730,ph:8.5},{orp:736,ph:8.0},{orp:752,ph:7.5},{orp:780,ph:7.0},{orp:818,ph:6.5}]}
+ {ppm:10.0,pts:[{orp:793,ph:8.5},{orp:800,ph:8.0},{orp:818,ph:7.5},{orp:848,ph:7.0},{orp:888,ph:6.5}]}
 ];
 
 const curvasElectro = [
@@ -200,8 +205,8 @@ const curvasElectro = [
 ];
 
 const modos = {
- hipoclorito: { curvas: curvasHipo, orpMin:550, orpMax:900, tag:'Hipoclorito — ppm ideal 1–3' },
- electrolisis: { curvas: curvasElectro, orpMin:600, orpMax:950, tag:'Salina — ppm ideal 0.5–1.5' }
+ hipoclorito: { curvas: curvasHipo, orpMin:550, orpMax:900, tag:'Hipoclorito sódico — ORP 550–900 mV', chartTitle:'Mapa ORP / pH — Hipoclorito', ppmBajo:1, ppmAlto:3 },
+ electrolisis: { curvas: curvasElectro, orpMin:600, orpMax:950, tag:'Electrólisis salina — ORP 600–950 mV', chartTitle:'Mapa ORP / pH — Electrólisis', ppmBajo:0.5, ppmAlto:1.5 }
 };
 
 let modoActual = 'hipoclorito';
@@ -218,9 +223,7 @@ function orpFromPh(curve, ph){
  return pts[pts.length-1].orp;
 }
 
-function tempCorrectedOrp(orp, tempC){
- return orp + (tempC - 25) * 0.6;
-}
+function tempCorrectedOrp(orp, tempC){ return orp + (tempC - 25) * 0.6; }
 
 function calcularPPM(ph, orp, tempC){
  const orpRef = tempCorrectedOrp(orp, tempC);
@@ -235,112 +238,71 @@ function calcularPPM(ph, orp, tempC){
  return orpRef < vals[0].orp ? 0.1 : 10.0;
 }
 
-// --- ACTUALIZACIÓN UI ---
-const phInput=document.getElementById('ph');
-const orpInput=document.getElementById('orp');
-const tempInput=document.getElementById('tempInput');
-const resultado=document.getElementById('resultado');
+// --- UI Y GRÁFICO ---
+const ctx = document.getElementById('grafico').getContext('2d');
+const grafico = new Chart(ctx, {
+ type:'scatter',
+ data: { datasets: [{ label: 'Lectura', data: [{x:750, y:7.5}], backgroundColor: '#ff3b5c', pointRadius: 9 }] },
+ options: { responsive:true, maintainAspectRatio:false, scales: { x:{min:550, max:900}, y:{min:6.5, max:8.5} } }
+});
 
 function update(){
- const ph = parseFloat(phInput.value);
- const orp = parseInt(orpInput.value);
- const temp = parseFloat(tempInput.value);
- 
- // Sincronizar textos
- document.getElementById('phVal').innerText = ph.toFixed(2);
- document.getElementById('orpVal').innerText = orp;
- document.getElementById('tempVal').innerText = temp.toFixed(1);
+ const ph = parseFloat(document.getElementById('ph').value);
+ const orp = parseFloat(document.getElementById('orp').value);
+ const temp = parseFloat(document.getElementById('tempInput').value);
+ const m = modos[modoActual];
 
- // Lógica de temperatura
+ // ACTUALIZACIÓN DE TEXTOS (Aquí está la corrección que pedías)
+ document.getElementById('phVal').innerText = ph.toFixed(2);
+ document.getElementById('orpVal').innerText = Math.round(orp);
+ document.getElementById('tempVal').innerText = temp.toFixed(1); // Ahora sí se actualiza
+
+ // Lógica Temperatura
  const corr = (temp - 25) * 0.6;
  document.getElementById('tempCorrVal').innerText = `${corr >= 0 ? '+' : ''}${corr.toFixed(1)} mV`;
  
  const badge = document.getElementById('tempBadge');
- if(temp < 20) { badge.innerText = "fría"; badge.style.background = "#38bdf822"; badge.style.color = "#0ea5e9"; }
- else if(temp <= 28) { badge.innerText = "óptima"; badge.style.background = "#22c55e22"; badge.style.color = "#16a34a"; }
- else { badge.innerText = "caliente"; badge.style.background = "#ef444422"; badge.style.color = "#dc2626"; }
+ if(temp <= 20) badge.innerText = "fría"; else if(temp <= 28) badge.innerText = "óptima"; else badge.innerText = "caliente";
 
- const tb = document.getElementById('tempBanner');
- if(temp >= 30) {
-  tb.style.display = 'flex';
-  document.getElementById('tempBannerDesc').innerText = `Agua a ${temp.toFixed(1)}°C: El cloro se degrada un 50% más rápido. Aumente la filtración.`;
- } else tb.style.display = 'none';
-
- // Calcular PPM final
+ // Cálculo Final
  const ppm = calcularPPM(ph, orp, temp);
- resultado.innerText = ppm.toFixed(2);
+ document.getElementById('resultado').innerText = ppm.toFixed(2);
  
- // Status Pill
- const status = document.getElementById('statusPill');
- if(ppm < 0.5) { status.innerText = "BAJO"; status.style.color = "var(--danger)"; }
- else if(ppm <= 3) { status.innerText = "ÓPTIMO"; status.style.color = "var(--accent2)"; }
- else { status.innerText = "ALTO"; status.style.color = "var(--warn)"; }
+ // Banners
+ document.getElementById('tempBanner').style.display = temp >= 30 ? 'flex' : 'none';
+ document.getElementById('tempBannerDesc').innerText = `A ${temp.toFixed(1)}°C el cloro se degrada rápidamente.`;
  
- updateChart(orp, ph);
-}
+ document.getElementById('statusPill').innerText = ppm < m.ppmBajo ? "BAJO" : ppm > m.ppmAlto ? "ALTO" : "ÓPTIMO";
 
-function adjustTemp(delta) {
- tempInput.value = (parseFloat(tempInput.value) + delta).toFixed(1);
- update();
-}
-
-function adjustPh(delta) {
- phInput.value = (parseFloat(phInput.value) + delta).toFixed(2);
- update();
-}
-
-function adjustOrp(delta) {
- orpInput.value = parseInt(orpInput.value) + delta;
- update();
-}
-
-// --- GRÁFICO ---
-const ctx = document.getElementById('grafico').getContext('2d');
-let grafico = new Chart(ctx, {
- type: 'scatter',
- data: {
-  datasets: [{
-   label: 'Lectura',
-   data: [{x: 750, y: 7.5}],
-   backgroundColor: '#ff3b5c',
-   pointRadius: 8
-  }]
- },
- options: {
-  responsive: true,
-  maintainAspectRatio: false,
-  scales: {
-   x: { min: 550, max: 950, title: { display: true, text: 'ORP (mV)' } },
-   y: { min: 6.5, max: 8.5, title: { display: true, text: 'pH' } }
-  }
- }
-});
-
-function updateChart(orp, ph) {
- grafico.data.datasets[0].data = [{x: orp, y: ph}];
+ grafico.data.datasets[0].data = [{x:orp, y:ph}];
  grafico.update('none');
 }
 
-// --- EVENTOS ---
-phInput.oninput = update;
-orpInput.oninput = update;
-tempInput.oninput = update;
-
-document.getElementById('btnHipo').onclick = () => {
- modoActual = 'hipoclorito';
- document.getElementById('btnHipo').classList.add('active');
- document.getElementById('btnElectro').classList.remove('active');
+// FUNCIONES DE AJUSTE
+function adjustTemp(delta){
+ const input = document.getElementById('tempInput');
+ input.value = (parseFloat(input.value) + delta).toFixed(1);
  update();
-};
-
-document.getElementById('btnElectro').onclick = () => {
- modoActual = 'electrolisis';
- document.getElementById('btnElectro').classList.add('active');
- document.getElementById('btnHipo').classList.remove('active');
+}
+function adjustPh(delta){
+ const input = document.getElementById('ph');
+ input.value = (parseFloat(input.value) + delta).toFixed(2);
  update();
-};
+}
+function adjustOrp(delta){
+ const input = document.getElementById('orp');
+ input.value = Math.round(parseFloat(input.value) + delta);
+ update();
+}
 
-// Inicializar
+// EVENTOS
+document.getElementById('ph').oninput = update;
+document.getElementById('orp').oninput = update;
+document.getElementById('tempInput').oninput = update;
+
+document.getElementById('btnHipo').onclick = () => { modoActual = 'hipoclorito'; update(); };
+document.getElementById('btnElectro').onclick = () => { modoActual = 'electrolisis'; update(); };
+
 update();
 </script>
 </body>
