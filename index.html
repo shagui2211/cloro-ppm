@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Cloro PPM">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link href="https://googleapis.com" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg:#ffffff;--surface:#f4f6fa;--surface2:#e8ecf4;
@@ -45,265 +45,667 @@
   .header-left h1{font-size:clamp(28px,5vw,44px);font-weight:800;letter-spacing:-1px;line-height:1;background:linear-gradient(120deg,var(--accent),var(--h1-grad-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
   .header-left p{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:6px;}
   .badge{font-family:var(--mono);font-size:11px;padding:5px 10px;border:1px solid var(--border);border-radius:4px;color:var(--muted);letter-spacing:1px;}
+
+  /* Mode selector */
   .mode-selector{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
   .mode-btn{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all 0.2s;text-align:left;width:100%;}
+  .mode-btn:hover{border-color:rgba(0,153,204,0.3);}
   .mode-btn.active{border-color:var(--accent);background:rgba(0,153,204,0.07);}
   .mode-btn.active.electro{border-color:#7c3aed;background:rgba(124,58,237,0.07);}
+  @media(prefers-color-scheme:dark){
+    :root:not([data-theme="light"]) .mode-btn:hover{border-color:rgba(0,212,255,0.2);}
+    :root:not([data-theme="light"]) .mode-btn.active{background:rgba(0,212,255,0.06);}
+    :root:not([data-theme="light"]) .mode-btn.active.electro{border-color:#a78bfa;background:rgba(167,139,250,0.06);}
+  }
+  [data-theme="dark"] .mode-btn:hover{border-color:rgba(0,212,255,0.2);}
+  [data-theme="dark"] .mode-btn.active{background:rgba(0,212,255,0.06);}
+  [data-theme="dark"] .mode-btn.active.electro{border-color:#a78bfa;background:rgba(167,139,250,0.06);}
   .mode-icon{font-size:20px;margin-bottom:6px;display:block;}
   .mode-name{font-family:var(--sans);font-size:13px;font-weight:700;color:var(--text);display:block;margin-bottom:2px;}
   .mode-desc{font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.4;}
+  .mode-btn.active .mode-name{color:var(--accent);}
+  .mode-btn.active.electro .mode-name{color:#7c3aed;}
+  @media(prefers-color-scheme:dark){
+    :root:not([data-theme="light"]) .mode-btn.active.electro .mode-name{color:#a78bfa;}
+  }
+  [data-theme="dark"] .mode-btn.active.electro .mode-name{color:#a78bfa;}
+  /* Theme toggle */
   .theme-toggle{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:16px;line-height:1;color:var(--text);transition:all 0.2s;}
+  .theme-toggle:hover{border-color:rgba(0,153,204,0.3);}
   .mode-tag{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:4px;border:1px solid rgba(0,153,204,0.35);color:var(--accent);background:rgba(0,153,204,0.07);display:inline-block;margin-bottom:16px;}
   .mode-tag.electro{border-color:rgba(124,58,237,0.35);color:#7c3aed;background:rgba(124,58,237,0.07);}
+  @media(prefers-color-scheme:dark){
+    :root:not([data-theme="light"]) .mode-tag{border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.06);}
+    :root:not([data-theme="light"]) .mode-tag.electro{border-color:rgba(167,139,250,0.3);color:#a78bfa;background:rgba(167,139,250,0.06);}
+  }
+  [data-theme="dark"] .mode-tag{border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.06);}
+  [data-theme="dark"] .mode-tag.electro{border-color:rgba(167,139,250,0.3);color:#a78bfa;background:rgba(167,139,250,0.06);}
+
+  /* Hero */
   .hero{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 32px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;}
   .result-block{display:flex;flex-direction:column;gap:4px;}
   .result-label{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
   .result-value{font-family:var(--mono);font-size:clamp(40px,8vw,72px);font-weight:300;line-height:1;color:var(--accent);transition:color 0.4s ease;letter-spacing:-2px;}
   .status-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:100px;font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:0.5px;background:rgba(0,153,204,0.08);color:var(--accent);border:1px solid rgba(0,153,204,0.25);transition:all 0.4s ease;}
+  @media(prefers-color-scheme:dark){
+    :root:not([data-theme="light"]) .status-pill{background:rgba(0,212,255,0.1);border-color:rgba(0,212,255,0.2);}
+  }
+  [data-theme="dark"] .status-pill{background:rgba(0,212,255,0.1);border-color:rgba(0,212,255,0.2);}
+
+  /* Sliders */
   .sliders-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
   @media(max-width:560px){.sliders-grid{grid-template-columns:1fr;}}
   .slider-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 24px;transition:border-color 0.2s;}
+  .slider-card:hover{border-color:rgba(0,153,204,0.3);}
+  @media(prefers-color-scheme:dark){
+    :root:not([data-theme="light"]) .slider-card:hover{border-color:rgba(0,212,255,0.2);}
+  }
+  [data-theme="dark"] .slider-card:hover{border-color:rgba(0,212,255,0.2);}
   .slider-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;}
   .slider-name{font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
   .slider-value{font-family:var(--mono);font-size:28px;font-weight:300;color:var(--text);letter-spacing:-1px;line-height:1;}
   .slider-unit{font-size:13px;color:var(--muted);margin-left:2px;}
   input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:2px;background:var(--surface2);outline:none;cursor:pointer;}
   input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(0,153,204,0.4);transition:transform 0.15s,box-shadow 0.15s;}
+  input[type=range]:hover::-webkit-slider-thumb{transform:scale(1.2);box-shadow:0 0 14px rgba(0,153,204,0.6);}
+  input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(0,153,204,0.4);cursor:pointer;}
+  @media(prefers-color-scheme:dark){
+    :root:not([data-theme="light"]) input[type=range]::-webkit-slider-thumb{box-shadow:0 0 10px rgba(0,212,255,0.5);}
+    :root:not([data-theme="light"]) input[type=range]:hover::-webkit-slider-thumb{box-shadow:0 0 16px rgba(0,212,255,0.7);}
+    :root:not([data-theme="light"]) input[type=range]::-moz-range-thumb{box-shadow:0 0 10px rgba(0,212,255,0.5);}
+  }
+  [data-theme="dark"] input[type=range]::-webkit-slider-thumb{box-shadow:0 0 10px rgba(0,212,255,0.5);}
+  [data-theme="dark"] input[type=range]:hover::-webkit-slider-thumb{box-shadow:0 0 16px rgba(0,212,255,0.7);}
+  [data-theme="dark"] input[type=range]::-moz-range-thumb{box-shadow:0 0 10px rgba(0,212,255,0.5);}
+  .slider-range-labels{display:flex;justify-content:space-between;margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--muted);}
+
+  /* Chart */
   .chart-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;}
   .chart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
   .chart-title{font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
-  .temp-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin-bottom:16px;transition:border-color 0.2s;}
-  .temp-badge{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:4px;border:1px solid var(--temp-border,rgba(249,115,22,0.4));color:var(--temp-color,#f97316);background:var(--temp-bg,rgba(249,115,22,0.07));display:inline-block;margin-left:8px;vertical-align:middle;transition:all 0.3s;}
-  .slider-range-labels{display:flex;justify-content:space-between;margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--muted);}
+  .legend-row{display:flex;gap:14px;flex-wrap:wrap;}
+  .legend-item{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10px;color:var(--muted);}
+  .legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
   canvas#grafico{width:100%!important;height:340px!important;}
+  .temp-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin-bottom:16px;transition:border-color 0.2s;}
+  .temp-card:hover{border-color:rgba(249,115,22,0.35);}
+  [data-theme="dark"] .temp-card:hover{border-color:rgba(251,146,60,0.3);}
+  .temp-bar{display:flex;gap:4px;margin-top:14px;margin-bottom:6px;}
+  .temp-zone{flex:1;height:6px;border-radius:3px;}
+  .temp-indicator{position:relative;margin-top:4px;}
+  input[type=range].temp-range::-webkit-slider-thumb{background:var(--temp-color,#f97316);box-shadow:0 0 8px var(--temp-color,#f97316);}
+  input[type=range].temp-range:hover::-webkit-slider-thumb{transform:scale(1.2);box-shadow:0 0 14px var(--temp-color,#f97316);}
+  input[type=range].temp-range::-moz-range-thumb{background:var(--temp-color,#f97316);box-shadow:0 0 8px var(--temp-color,#f97316);}
+  .temp-badge{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:4px;border:1px solid var(--temp-border,rgba(249,115,22,0.4));color:var(--temp-color,#f97316);background:var(--temp-bg,rgba(249,115,22,0.07));display:inline-block;margin-left:8px;vertical-align:middle;transition:all 0.3s;}
 </style>
 </head>
 <body>
 <div class="container">
- <header>
- <div class="header-left">
- <h1>Cloro Libre</h1>
- <p>Calculadora pH · ORP → ppm</p>
- </div>
- <div style="display:flex;align-items:center;gap:10px;">
- <button class="theme-toggle" id="themeToggle" title="Cambiar tema">☀</button>
- <div class="badge">Valentin Somni</div>
- </div>
- </header>
 
- <div class="mode-selector">
- <button class="mode-btn active" id="btnHipo">
- <span class="mode-icon">🧴</span>
- <span class="mode-name">Hipoclorito</span>
- <span class="mode-desc">Cloro líquido · pastillas · granular</span>
- </button>
- <button class="mode-btn electro" id="btnElectro">
- <span class="mode-icon">⚡</span>
- <span class="mode-name">Electrólisis</span>
- <span class="mode-desc">Salina · clorador electrolítico</span>
- </button>
- </div>
+  <header>
+    <div class="header-left">
+      <h1>Cloro Libre</h1>
+      <p>Calculadora pH · ORP → ppm</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button class="theme-toggle" id="themeToggle" title="Cambiar tema">☀️</button>
+      <div class="badge">Valentin Somni</div>
+    </div>
+  </header>
 
- <div class="mode-tag" id="modeTag">Hipoclorito sódico — ORP 550–900 mV · ppm ideal 1–3</div>
+  <div class="mode-selector">
+    <button class="mode-btn active" id="btnHipo">
+      <span class="mode-icon">🧴</span>
+      <span class="mode-name">Hipoclorito</span>
+      <span class="mode-desc">Cloro líquido · pastillas · granular</span>
+    </button>
+    <button class="mode-btn electro" id="btnElectro">
+      <span class="mode-icon">⚡</span>
+      <span class="mode-name">Electrólisis</span>
+      <span class="mode-desc">Salina · clorador electrolítico</span>
+    </button>
+  </div>
 
- <div class="hero">
- <div class="result-block">
- <span class="result-label">Concentración estimada</span>
- <div style="display:flex;align-items:flex-end;gap:8px">
- <div class="result-value" id="resultado">—</div>
- <div style="font-family:var(--mono);font-size:18px;color:var(--muted);padding-bottom:10px">ppm</div>
- </div>
- </div>
- <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
- <div class="status-pill" id="statusPill">Cargando…</div>
- <div class="status-pill" id="phPill" style="display:none"></div>
- </div>
- </div>
+  <div class="mode-tag" id="modeTag">Hipoclorito sódico — ORP 550–900 mV · ppm ideal 1–3</div>
 
- <div class="sliders-grid">
- <div class="slider-card">
- <div class="slider-header">
- <span class="slider-name">pH</span>
- <div><span class="slider-value" id="phVal">7.5</span></div>
- </div>
- <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
- <button onclick="adjustPh(-0.1)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;">−</button>
- <input type="range" min="6.5" max="8.5" step="0.01" value="7.5" id="ph" style="flex:1;">
- <button onclick="adjustPh(0.1)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;">+</button>
- </div>
- <div class="slider-range-labels"><span>6.5</span><span>8.5</span></div>
- </div>
+  <div class="hero">
+    <div class="result-block">
+      <span class="result-label">Concentración estimada</span>
+      <div style="display:flex;align-items:flex-end;gap:8px">
+        <div class="result-value" id="resultado">—</div>
+        <div style="font-family:var(--mono);font-size:18px;color:var(--muted);padding-bottom:10px">ppm</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+      <div class="status-pill" id="statusPill">Cargando…</div>
+      <div class="status-pill" id="phPill" style="display:none"></div>
+    </div>
+  </div>
 
- <div class="slider-card">
- <div class="slider-header">
- <span class="slider-name">ORP</span>
- <div><span class="slider-value" id="orpVal">750</span><span class="slider-unit">mV</span></div>
- </div>
- <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
- <button onclick="adjustOrp(-5)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;">−</button>
- <input type="range" min="550" max="950" step="1" value="750" id="orp" style="flex:1;">
- <button onclick="adjustOrp(5)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;">+</button>
- </div>
- <div class="slider-range-labels" id="orpLabels"><span>550 mV</span><span>950 mV</span></div>
- </div>
- </div>
+  <div class="sliders-grid">
+    <div class="slider-card">
+      <div class="slider-header">
+        <span class="slider-name">pH</span>
+        <div><span class="slider-value" id="phVal">7.5</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <button onclick="adjustPh(-0.1)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">−</button>
+        <input type="range" min="6.5" max="8.5" step="0.01" value="7.5" id="ph" style="flex:1;">
+        <button onclick="adjustPh(0.1)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">+</button>
+      </div>
+      <div class="slider-range-labels"><span>6.5</span><span>8.5</span></div>
+    </div>
+    <div class="slider-card">
+      <div class="slider-header">
+        <span class="slider-name">ORP</span>
+        <div><span class="slider-value" id="orpVal">750</span><span class="slider-unit">mV</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <button onclick="adjustOrp(-5)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">−</button>
+        <input type="range" min="550" max="950" step="1" value="750" id="orp" style="flex:1;">
+        <button onclick="adjustOrp(5)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">+</button>
+      </div>
+      <div class="slider-range-labels" id="orpLabels"><span>550 mV</span><span>950 mV</span></div>
+    </div>
+  </div>
 
- <!-- Sección Temperatura Corregida -->
- <div class="temp-card" id="tempCard">
- <div class="slider-header">
- <div style="display:flex;align-items:center;gap:6px;">
- <span class="slider-name">🌡 Temperatura del agua</span>
- <span class="temp-badge" id="tempBadge">templada</span>
- </div>
- <div>
- <span class="slider-value" id="tempVal" style="color:var(--temp-color,#f97316);">24.0</span>
- <span class="slider-unit">°C</span>
- </div>
- </div>
- <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
- <button onclick="adjustTemp(-0.1)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;">−</button>
- <input type="range" class="temp-range" min="10" max="40" step="0.1" value="24.0" id="tempInput" style="flex:1;">
- <button onclick="adjustTemp(0.1)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;">+</button>
- </div>
- <div class="slider-range-labels"><span>10 °C</span><span style="color:#f59e0b">24 °C óptima</span><span style="color:#dc2626">40 °C</span></div>
- <div style="margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--muted);" id="tempCorrection">Corrección ORP: <span id="tempCorrVal" style="color:var(--accent);">0 mV</span></div>
- </div>
+  <!-- Temperatura -->
+  <div class="temp-card" id="tempCard">
+    <div class="slider-header">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span class="slider-name">🌡 Temperatura del agua</span>
+        <span class="temp-badge" id="tempBadge">templada</span>
+      </div>
+      <div>
+        <span class="slider-value" id="tempVal" style="color:var(--temp-color,#f97316);">24</span>
+        <span class="slider-unit">°C</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+      <button onclick="adjustTemp(-1)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">−</button>
+      <input type="range" class="temp-range" min="10" max="40" step="1" value="24" id="tempInput" style="flex:1;">
+      <button onclick="adjustTemp(1)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">+</button>
+    </div>
+    <div class="slider-range-labels"><span>10 °C</span><span style="color:#f59e0b">24 °C óptima</span><span style="color:#dc2626">40 °C</span></div>
+    <div style="margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--muted);" id="tempCorrection">Corrección ORP: <span id="tempCorrVal" style="color:var(--accent);">0 mV</span> — La temperatura modifica el equilibrio electroquímico del cloro según la ecuación de Nernst.</div>
+  </div>
 
- <!-- Banners -->
- <div id="tempBanner" style="display:none;background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.25);border-radius:12px;padding:14px;margin-bottom:16px;gap:12px;">
- <div><div style="font-weight:700;font-size:13px;color:#ea580c;">Agua caliente — mayor consumo</div><div style="font-family:var(--mono);font-size:11px;color:#7c4a1e;" id="tempBannerDesc"></div></div>
- </div>
+  <!-- Temperatura alta -->
+  <div id="tempBanner" style="display:none;background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.25);border-radius:12px;padding:14px 18px;margin-bottom:16px;align-items:flex-start;gap:12px;">
+    <span style="font-size:20px;line-height:1;flex-shrink:0">🔥</span>
+    <div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#ea580c;margin-bottom:4px;">Agua caliente — mayor consumo de cloro</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:#7c4a1e;line-height:1.6;" id="tempBannerDesc">Por encima de 28 °C el cloro se degrada mucho más rápido. Aumenta la dosis y la frecuencia de medición.</div>
+    </div>
+  </div>
 
- <div id="chloroBanner" style="display:none;background:rgba(0,153,204,0.06);border:1px solid rgba(0,153,204,0.22);border-radius:12px;padding:16px;margin-bottom:16px;">
- <div style="font-weight:700;color:#0077aa;font-size:13px;">Nivel de cloro insuficiente</div>
- <div style="font-family:var(--mono);font-size:11px;color:#336688;" id="chloroBajoDesc"></div>
- <div id="chloroBajoAcciones" style="margin-top:8px;"></div>
- </div>
+  <!-- Cloro bajo -->
+  <div id="chloroBanner" style="display:none;background:rgba(0,153,204,0.06);border:1px solid rgba(0,153,204,0.22);border-radius:12px;padding:16px 18px;margin-bottom:16px;align-items:flex-start;gap:12px;">
+    <span style="font-size:20px;line-height:1;flex-shrink:0">🦠</span>
+    <div style="flex:1">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#0077aa;margin-bottom:8px;">Nivel de cloro insuficiente — riesgo bacterias y algas</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:#336688;line-height:1.7;margin-bottom:10px;" id="chloroBajoDesc"></div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:11px;color:#0077aa;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Acciones correctivas</div>
+      <div style="display:flex;flex-direction:column;gap:5px;" id="chloroBajoAcciones"></div>
+    </div>
+  </div>
 
- <div class="chart-card">
- <div class="chart-header">
- <span class="chart-title" id="chartTitle">Mapa ORP / pH — Hipoclorito</span>
- </div>
- <canvas id="grafico"></canvas>
- </div>
+  <!-- Cloro alto -->
+  <div id="chloroAltoBanner" style="display:none;background:rgba(220,38,38,0.05);border:1px solid rgba(220,38,38,0.2);border-radius:12px;padding:16px 18px;margin-bottom:16px;align-items:flex-start;gap:12px;">
+    <span style="font-size:20px;line-height:1;flex-shrink:0">☣️</span>
+    <div style="flex:1">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#cc2200;margin-bottom:8px;">Nivel de cloro excesivo — irritación y olor fuerte</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:#7a3a2a;line-height:1.7;margin-bottom:10px;" id="chloroAltoDesc"></div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:11px;color:#cc2200;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Acciones para reducirlo</div>
+      <div style="display:flex;flex-direction:column;gap:5px;" id="chloroAltoAcciones"></div>
+    </div>
+  </div>
+
+  <!-- pH ácido -->
+  <div id="acidBanner" style="display:none;background:rgba(217,119,6,0.06);border:1px solid rgba(217,119,6,0.22);border-radius:12px;padding:14px 18px;margin-bottom:16px;align-items:flex-start;gap:12px;">
+    <span style="font-size:20px;line-height:1;flex-shrink:0">🧪</span>
+    <div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#b45309;margin-bottom:4px;">Cloro corrosivo por pH bajo</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:#78530a;line-height:1.6;">Con pH inferior a 7.2 el cloro se vuelve extremadamente agresivo: provoca irritación en ojos y piel, corroe equipos metálicos y deteriora los materiales de la piscina. Añade incrementador de pH para corregir.</div>
+    </div>
+  </div>
+
+  <!-- pH alcalino -->
+  <div id="alkalineBanner" style="display:none;background:rgba(220,38,38,0.05);border:1px solid rgba(220,38,38,0.2);border-radius:12px;padding:14px 18px;margin-bottom:16px;align-items:flex-start;gap:12px;">
+    <span style="font-size:20px;line-height:1;flex-shrink:0">⚠️</span>
+    <div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#dc2626;margin-bottom:4px;">Cloro ineficaz por pH elevado</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:#7a2828;line-height:1.6;">Con pH superior a 8.0 el cloro pierde eficacia drásticamente. El agua puede volverse turbia y aparecer algas. Añade corrector de pH antes de ajustar el cloro.</div>
+    </div>
+  </div>
+
+  <!-- Sal (solo electrólisis) -->
+  <div id="salBanner" style="display:none;background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.22);border-radius:12px;padding:14px 18px;margin-bottom:16px;align-items:flex-start;gap:12px;">
+    <span style="font-size:20px;line-height:1;flex-shrink:0">🧂</span>
+    <div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#7c3aed;margin-bottom:4px;">Recuerda verificar el nivel de sal</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:#5b4b8a;line-height:1.6;">En electrólisis salina el nivel de sal debe estar entre 3.000–5.000 ppm (según fabricante). Un nivel bajo reduce la producción de cloro aunque el ORP parezca correcto.</div>
+    </div>
+  </div>
+
+  <!-- Chart -->
+  <div class="chart-card">
+    <div class="chart-header">
+      <span class="chart-title" id="chartTitle">Mapa ORP / pH — Hipoclorito</span>
+      <div class="legend-row">
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(0,130,200,0.7)"></div>bajo</div>
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(180,100,0,0.7)"></div>medio</div>
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(200,40,40,0.7)"></div>alto</div>
+        <div class="legend-item"><div class="legend-dot" style="background:red;border-radius:50%"></div>lectura</div>
+      </div>
+    </div>
+    <canvas id="grafico" height="340"></canvas>
+  </div>
+
 </div>
-
-<script src="https://jsdelivr.net"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// --- CURVAS E INTERPOLACIÓN ---
+// ── CURVE DATA ──────────────────────────────────────────────
 const curvasHipo = [
- {ppm:0.2, pts:[{orp:560,ph:8.5},{orp:563,ph:8.0},{orp:570,ph:7.5},{orp:590,ph:7.0},{orp:620,ph:6.5}]},
- {ppm:1.0, pts:[{orp:625,ph:8.5},{orp:630,ph:8.0},{orp:642,ph:7.5},{orp:665,ph:7.0},{orp:698,ph:6.5}]},
- {ppm:3.0, pts:[{orp:693,ph:8.5},{orp:698,ph:8.0},{orp:713,ph:7.5},{orp:740,ph:7.0},{orp:776,ph:6.5}]},
- {ppm:10.0,pts:[{orp:793,ph:8.5},{orp:800,ph:8.0},{orp:818,ph:7.5},{orp:848,ph:7.0},{orp:888,ph:6.5}]}
+  {ppm:0.2, pts:[{orp:560,ph:8.5},{orp:563,ph:8.0},{orp:570,ph:7.5},{orp:590,ph:7.0},{orp:620,ph:6.5}]},
+  {ppm:0.6, pts:[{orp:598,ph:8.5},{orp:602,ph:8.0},{orp:612,ph:7.5},{orp:635,ph:7.0},{orp:665,ph:6.5}]},
+  {ppm:1.0, pts:[{orp:625,ph:8.5},{orp:630,ph:8.0},{orp:642,ph:7.5},{orp:665,ph:7.0},{orp:698,ph:6.5}]},
+  {ppm:2.0, pts:[{orp:663,ph:8.5},{orp:668,ph:8.0},{orp:682,ph:7.5},{orp:707,ph:7.0},{orp:742,ph:6.5}]},
+  {ppm:3.0, pts:[{orp:693,ph:8.5},{orp:698,ph:8.0},{orp:713,ph:7.5},{orp:740,ph:7.0},{orp:776,ph:6.5}]},
+  {ppm:5.0, pts:[{orp:730,ph:8.5},{orp:736,ph:8.0},{orp:752,ph:7.5},{orp:780,ph:7.0},{orp:818,ph:6.5}]},
+  {ppm:7.0, pts:[{orp:758,ph:8.5},{orp:764,ph:8.0},{orp:781,ph:7.5},{orp:810,ph:7.0},{orp:848,ph:6.5}]},
+  {ppm:10.0,pts:[{orp:793,ph:8.5},{orp:800,ph:8.0},{orp:818,ph:7.5},{orp:848,ph:7.0},{orp:888,ph:6.5}]}
 ];
 
+// Electrólisis: curvas desplazadas ~30 mV a la derecha (mayor [HOCl] activo a mismo ORP)
 const curvasElectro = [
- {ppm:0.2, pts:[{orp:588,ph:8.5},{orp:592,ph:8.0},{orp:600,ph:7.5},{orp:620,ph:7.0},{orp:650,ph:6.5}]},
- {ppm:1.0, pts:[{orp:653,ph:8.5},{orp:659,ph:8.0},{orp:672,ph:7.5},{orp:695,ph:7.0},{orp:728,ph:6.5}]},
- {ppm:3.0, pts:[{orp:721,ph:8.5},{orp:727,ph:8.0},{orp:743,ph:7.5},{orp:770,ph:7.0},{orp:806,ph:6.5}]}
+  {ppm:0.2, pts:[{orp:588,ph:8.5},{orp:592,ph:8.0},{orp:600,ph:7.5},{orp:620,ph:7.0},{orp:650,ph:6.5}]},
+  {ppm:0.6, pts:[{orp:626,ph:8.5},{orp:631,ph:8.0},{orp:642,ph:7.5},{orp:665,ph:7.0},{orp:695,ph:6.5}]},
+  {ppm:1.0, pts:[{orp:653,ph:8.5},{orp:659,ph:8.0},{orp:672,ph:7.5},{orp:695,ph:7.0},{orp:728,ph:6.5}]},
+  {ppm:2.0, pts:[{orp:691,ph:8.5},{orp:697,ph:8.0},{orp:712,ph:7.5},{orp:737,ph:7.0},{orp:772,ph:6.5}]},
+  {ppm:3.0, pts:[{orp:721,ph:8.5},{orp:727,ph:8.0},{orp:743,ph:7.5},{orp:770,ph:7.0},{orp:806,ph:6.5}]},
+  {ppm:5.0, pts:[{orp:758,ph:8.5},{orp:765,ph:8.0},{orp:782,ph:7.5},{orp:810,ph:7.0},{orp:848,ph:6.5}]},
+  {ppm:7.0, pts:[{orp:786,ph:8.5},{orp:793,ph:8.0},{orp:811,ph:7.5},{orp:840,ph:7.0},{orp:878,ph:6.5}]},
+  {ppm:10.0,pts:[{orp:821,ph:8.5},{orp:829,ph:8.0},{orp:848,ph:7.5},{orp:878,ph:7.0},{orp:918,ph:6.5}]}
 ];
 
 const modos = {
- hipoclorito: { curvas: curvasHipo, orpMin:550, orpMax:900, tag:'Hipoclorito sódico — ORP 550–900 mV', chartTitle:'Mapa ORP / pH — Hipoclorito', ppmBajo:1, ppmAlto:3 },
- electrolisis: { curvas: curvasElectro, orpMin:600, orpMax:950, tag:'Electrólisis salina — ORP 600–950 mV', chartTitle:'Mapa ORP / pH — Electrólisis', ppmBajo:0.5, ppmAlto:1.5 }
+  hipoclorito: {
+    curvas: curvasHipo, orpMin:550, orpMax:900,
+    ppmBajo:1, ppmAlto:3,
+    optimo:'1–1.5 ppm (hasta 3 ppm en picos de calor)',
+    tag:'Hipoclorito sódico — ORP 550–900 mV · ppm ideal 1–3',
+    chartTitle:'Mapa ORP / pH — Hipoclorito',
+    bajoBajoDesc: ppm => `Por debajo de 1 ppm el poder desinfectante desaparece. Rango ideal: 1–1.5 ppm (hasta 3 ppm en calor).`,
+    bajoAcciones:`
+      <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#336688;line-height:1.6;display:flex;gap:8px;"><span style="color:#0077aa;flex-shrink:0">01</span><span><strong style="color:#005588">Choque de cloro:</strong> Añadir cloro granular diluido para subir los niveles rápidamente.</span></div>
+      <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#336688;line-height:1.6;display:flex;gap:8px;"><span style="color:#0077aa;flex-shrink:0">02</span><span><strong style="color:#005588">Estabilizador (ácido cianúrico):</strong> Si &lt;30 ppm el cloro se evapora con el sol. Ideal: 30–70 ppm.</span></div>
+      <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#336688;line-height:1.6;display:flex;gap:8px;"><span style="color:#0077aa;flex-shrink:0">03</span><span><strong style="color:#005588">Depuración:</strong> Aumentar horas de filtrado para distribuir el cloro correctamente.</span></div>
+      <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#336688;line-height:1.6;display:flex;gap:8px;"><span style="color:#0077aa;flex-shrink:0">04</span><span><strong style="color:#005588">Revisar pH:</strong> Mantener entre 7.2–7.6. Con pH alto el cloro no desinfecta.</span></div>`,
+    altoDesc:'Por encima de 3–4 ppm provoca irritación en ojos y piel y olor intenso. No se recomienda el baño.',
+    altoAcciones:`
+      <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#7a3a2a;line-height:1.6;display:flex;gap:8px;"><span style="color:#cc4400;flex-shrink:0">01</span><span><strong style="color:#aa3300">Detener la cloración:</strong> Parar el dosificador o retirar las pastillas.</span></div>
+      <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#7a3a2a;line-height:1.6;display:flex;gap:8px;"><span style="color:#cc4400;flex-shrink:0">02</span><span><strong style="color:#aa3300">Exposición al sol:</strong> La luz UV degrada el cloro de forma natural.</span></div>
+      <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#7a3a2a;line-height:1.6;display:flex;gap:8px;"><span style="color:#cc4400;flex-shrink:0">03</span><span><strong style="color:#aa3300">Renovación parcial:</strong> Sustituir 10–30 % del agua por agua limpia.</span></div>
+      <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#7a3a2a;line-height:1.6;display:flex;gap:8px;"><span style="color:#cc4400;flex-shrink:0">04</span><span><strong style="color:#aa3300">Neutralizador:</strong> Tiosulfato de sodio si es urgente.</span></div>`
+  },
+  electrolisis: {
+    curvas: curvasElectro, orpMin:600, orpMax:950,
+    ppmBajo:0.5, ppmAlto:2,
+    optimo:'0.5–1.5 ppm (la electrólisis es más eficiente a menor concentración)',
+    tag:'Electrólisis salina — ORP 600–950 mV · ppm ideal 0.5–1.5',
+    chartTitle:'Mapa ORP / pH — Electrólisis salina',
+    bajoBajoDesc: ppm => `Por debajo de 0.5 ppm el poder desinfectante desaparece. Rango ideal: 0.5–1.5 ppm.`,
+    bajoAcciones:`
+      <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#336688;line-height:1.6;display:flex;gap:8px;"><span style="color:#0077aa;flex-shrink:0">01</span><span><strong style="color:#005588">Aumentar producción:</strong> Subir el porcentaje del clorador electrolítico.</span></div>
+      <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#336688;line-height:1.6;display:flex;gap:8px;"><span style="color:#0077aa;flex-shrink:0">02</span><span><strong style="color:#005588">Verificar nivel de sal:</strong> Debe estar entre 3.000–5.000 ppm. Con sal baja el clorador no produce eficientemente.</span></div>
+      <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#336688;line-height:1.6;display:flex;gap:8px;"><span style="color:#0077aa;flex-shrink:0">03</span><span><strong style="color:#005588">Limpiar células:</strong> Las células calcificadas reducen la producción. Revisión periódica recomendada.</span></div>
+      <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#336688;line-height:1.6;display:flex;gap:8px;"><span style="color:#0077aa;flex-shrink:0">04</span><span><strong style="color:#005588">Aumentar filtración:</strong> Más horas de bomba = más cloro producido y distribuido.</span></div>`,
+    altoDesc:'Por encima de 2–3 ppm en electrólisis salina puede provocar irritación. Reducir la producción del clorador.',
+    altoAcciones:`
+      <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#7a3a2a;line-height:1.6;display:flex;gap:8px;"><span style="color:#cc4400;flex-shrink:0">01</span><span><strong style="color:#aa3300">Reducir producción:</strong> Bajar el porcentaje del clorador o activar el modo reducción automática.</span></div>
+      <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#7a3a2a;line-height:1.6;display:flex;gap:8px;"><span style="color:#cc4400;flex-shrink:0">02</span><span><strong style="color:#aa3300">Reducir filtración:</strong> Menos horas de bomba = menos producción de cloro.</span></div>
+      <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#7a3a2a;line-height:1.6;display:flex;gap:8px;"><span style="color:#cc4400;flex-shrink:0">03</span><span><strong style="color:#aa3300">Exposición al sol:</strong> Dejar la piscina descubierta para degradar el exceso de cloro.</span></div>
+      <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:#7a3a2a;line-height:1.6;display:flex;gap:8px;"><span style="color:#cc4400;flex-shrink:0">04</span><span><strong style="color:#aa3300">Renovación parcial:</strong> Sustituir 10–20 % del agua si el nivel es muy elevado.</span></div>`
+  }
 };
 
 let modoActual = 'hipoclorito';
 
+// ── INTERPOLATION ───────────────────────────────────────────
 function orpFromPh(curve, ph){
- const pts = curve.pts;
- for(let i=0;i<pts.length-1;i++){
-  const phHi=pts[i].ph, phLo=pts[i+1].ph;
-  if(ph<=phHi && ph>=phLo){
-   const t=(phHi-ph)/(phHi-phLo);
-   return pts[i].orp + t*(pts[i+1].orp-pts[i].orp);
+  const pts = curve.pts;
+  if(ph >= pts[0].ph) return pts[0].orp;
+  if(ph <= pts[pts.length-1].ph) return pts[pts.length-1].orp;
+  for(let i=0;i<pts.length-1;i++){
+    const phHi=pts[i].ph, phLo=pts[i+1].ph;
+    if(ph<=phHi && ph>=phLo){
+      const t=(phHi-ph)/(phHi-phLo);
+      return pts[i].orp + t*(pts[i+1].orp-pts[i].orp);
+    }
   }
- }
- return pts[pts.length-1].orp;
+  return pts[pts.length-1].orp;
 }
 
-function tempCorrectedOrp(orp, tempC){ return orp + (tempC - 25) * 0.6; }
+// Nernst temperature correction:
+// ORP shifts ~−0.6 mV per °C above 25°C reference (Clausius-Clapeyron / Nernst approx)
+// More precisely: ΔE = (RT/nF)*ln(...) — for pool ORP the empirical factor is ~0.6 mV/°C
+// We correct the measured ORP to what it would read at 25°C before looking up ppm.
+function tempCorrectedOrp(orp, tempC){
+  const REF_TEMP = 25; // calibration reference for the curve data (°C)
+  const MV_PER_DEG = 0.6; // mV shift per °C (Nernst approximation for aqueous Cl₂/HOCl)
+  return orp + (tempC - REF_TEMP) * MV_PER_DEG;
+}
 
 function calcularPPM(ph, orp, tempC){
- const orpRef = tempCorrectedOrp(orp, tempC);
- const curvas = modos[modoActual].curvas;
- const vals = curvas.map(c=>({ppm:c.ppm, orp:orpFromPh(c,ph)}));
- for(let i=0;i<vals.length-1;i++){
-  if(orpRef>=vals[i].orp && orpRef<=vals[i+1].orp){
-   const f=(orpRef-vals[i].orp)/(vals[i+1].orp-vals[i].orp);
-   return vals[i].ppm + f*(vals[i+1].ppm-vals[i].ppm);
+  const t = tempC !== undefined ? tempC : +document.getElementById('tempInput').value;
+  const orpRef = tempCorrectedOrp(orp, t);
+  const curvas = modos[modoActual].curvas;
+  const vals = curvas.map(c=>({ppm:c.ppm, orp:orpFromPh(c,ph)}));
+  for(let i=0;i<vals.length-1;i++){
+    if(orpRef>=vals[i].orp && orpRef<=vals[i+1].orp){
+      const f=(orpRef-vals[i].orp)/(vals[i+1].orp-vals[i].orp);
+      return vals[i].ppm + f*(vals[i+1].ppm-vals[i].ppm);
+    }
   }
- }
- return orpRef < vals[0].orp ? 0.1 : 10.0;
+  if(orpRef<vals[0].orp) return vals[0].ppm;
+  return vals[vals.length-1].ppm;
 }
 
-// --- UI Y GRÁFICO ---
-const ctx = document.getElementById('grafico').getContext('2d');
-const grafico = new Chart(ctx, {
- type:'scatter',
- data: { datasets: [{ label: 'Lectura', data: [{x:750, y:7.5}], backgroundColor: '#ff3b5c', pointRadius: 9 }] },
- options: { responsive:true, maintainAspectRatio:false, scales: { x:{min:550, max:900}, y:{min:6.5, max:8.5} } }
+function buildCurvePoints(curve){
+  const pts=[];
+  for(let ph=8.5;ph>=6.5;ph-=0.02){
+    pts.push({x:orpFromPh(curve,Number(ph.toFixed(2))),y:Number(ph.toFixed(2))});
+  }
+  return pts;
+}
+
+function borderZona(ppm){
+  return isDark()
+    ? (ppm<=3?'rgba(0,212,255,0.5)':ppm<=7?'rgba(255,209,102,0.55)':'rgba(255,90,90,0.55)')
+    : (ppm<=3?'rgba(0,130,200,0.6)':ppm<=7?'rgba(180,100,0,0.65)':'rgba(200,40,40,0.65)');
+}
+
+function buildDatasets(curvas){
+  const ds=[];
+  for(const c of curvas){
+    ds.push({label:`${c.ppm}`,data:buildCurvePoints(c),borderColor:borderZona(c.ppm),backgroundColor:'transparent',showLine:true,tension:0.4,pointRadius:0,borderWidth:1.5,fill:false});
+  }
+  ds.push({label:'Lectura',data:[{x:750,y:7.5}],borderColor:'#ff3b5c',backgroundColor:'#ff3b5c',pointRadius:9,pointHoverRadius:12,showLine:false,pointStyle:'circle',borderWidth:2});
+  return ds;
+}
+
+const ppmLabelPlugin={
+  id:'ppmLabels',
+  afterDraw(chart){
+    const {ctx,chartArea,scales}=chart;
+    ctx.save();
+    ctx.font="bold 10px 'DM Mono',monospace";
+    ctx.textAlign='center';ctx.textBaseline='bottom';
+    modos[modoActual].curvas.forEach(c=>{
+      const px=scales.x.getPixelForValue(orpFromPh(c,8.5));
+      const py=scales.y.getPixelForValue(8.5);
+      if(px>=chartArea.left && px<=chartArea.right){ctx.fillStyle=borderZona(c.ppm);ctx.fillText(c.ppm,px,py-4);}
+    });
+    ctx.restore();
+  }
+};
+
+const ctx=document.getElementById('grafico').getContext('2d');
+
+function isDark(){ return window.matchMedia('(prefers-color-scheme:dark)').matches; }
+
+function chartColors(){
+  return isDark()
+    ? {muted:'#5a6070',grid:'rgba(255,255,255,0.04)',border:'rgba(255,255,255,0.06)',tooltipBg:'rgba(17,19,24,0.95)',tooltipTitle:'#5a6070',tooltipBody:'#e8eaf0',tooltipBorder:'rgba(255,255,255,0.1)'}
+    : {muted:'#6b7280',grid:'rgba(0,0,0,0.06)',border:'rgba(0,0,0,0.1)',tooltipBg:'rgba(255,255,255,0.97)',tooltipTitle:'#6b7280',tooltipBody:'#1a1d26',tooltipBorder:'rgba(0,0,0,0.12)'};
+}
+
+function applyChartColors(){
+  const c=chartColors();
+  grafico.options.plugins.tooltip.backgroundColor=c.tooltipBg;
+  grafico.options.plugins.tooltip.titleColor=c.tooltipTitle;
+  grafico.options.plugins.tooltip.bodyColor=c.tooltipBody;
+  grafico.options.plugins.tooltip.borderColor=c.tooltipBorder;
+  grafico.options.scales.x.title.color=c.muted;
+  grafico.options.scales.x.grid.color=c.grid;
+  grafico.options.scales.x.ticks.color=c.muted;
+  grafico.options.scales.x.border.color=c.border;
+  grafico.options.scales.y.title.color=c.muted;
+  grafico.options.scales.y.grid.color=c.grid;
+  grafico.options.scales.y.ticks.color=c.muted;
+  grafico.options.scales.y.border.color=c.border;
+  grafico.update();
+}
+
+const _initC=chartColors();
+const grafico=new Chart(ctx,{
+  type:'scatter',
+  data:{datasets:buildDatasets(curvasHipo)},
+  plugins:[ppmLabelPlugin],
+  options:{
+    responsive:true,maintainAspectRatio:false,animation:{duration:200},
+    plugins:{
+      legend:{display:false},
+      tooltip:{filter:item=>item.datasetIndex===grafico?.data.datasets.length-1,
+        backgroundColor:_initC.tooltipBg,titleColor:_initC.tooltipTitle,bodyColor:_initC.tooltipBody,
+        borderColor:_initC.tooltipBorder,borderWidth:1,
+        titleFont:{family:"'DM Mono',monospace",size:11},bodyFont:{family:"'DM Mono',monospace",size:12},
+        callbacks:{label:item=>`ORP: ${item.parsed.x} mV  pH: ${item.parsed.y.toFixed(2)}`}}
+    },
+    scales:{
+      x:{type:'linear',min:550,max:900,title:{display:true,text:'ORP (mV)',color:_initC.muted,font:{family:"'Syne',sans-serif",size:12,weight:'700'}},grid:{color:_initC.grid},ticks:{color:_initC.muted,font:{family:"'DM Mono',monospace",size:10},stepSize:50},border:{color:_initC.border}},
+      y:{min:6.5,max:8.5,title:{display:true,text:'pH',color:_initC.muted,font:{family:"'Syne',sans-serif",size:12,weight:'700'}},grid:{color:_initC.grid},ticks:{color:_initC.muted,font:{family:"'DM Mono',monospace",size:10},stepSize:0.5},border:{color:_initC.border}}
+    }
+  }
 });
 
+window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', ()=>{
+  // Rebuild datasets with new curve colors
+  const m=modos[modoActual];
+  const ph=+document.getElementById('ph').value, orp=+document.getElementById('orp').value;
+  const newDs=buildDatasets(m.curvas);
+  newDs[newDs.length-1].data=[{x:orp,y:ph}];
+  grafico.data.datasets=newDs;
+  applyChartColors();
+});
+
+// ── DOM ──────────────────────────────────────────────────────
+const phInput=document.getElementById('ph');
+const orpInput=document.getElementById('orp');
+const phVal=document.getElementById('phVal');
+const orpVal=document.getElementById('orpVal');
+const resultado=document.getElementById('resultado');
+const statusPill=document.getElementById('statusPill');
+const phPill=document.getElementById('phPill');
+
+function pill(txt,color,bg,border){
+  return `<span style="width:8px;height:8px;border-radius:50%;background:${color};box-shadow:0 0 8px ${color};flex-shrink:0;display:inline-block"></span>${txt}`;
+}
+
+function getPhStatus(ph){
+  if(ph<=6.5) return {text:'⚠ Agua ácida',color:'#dc2626',bg:'rgba(220,38,38,0.08)',border:'rgba(220,38,38,0.3)'};
+  if(ph<7.2)  return {text:'Agua ligeramente ácida',color:'var(--warn)',bg:'rgba(217,119,6,0.08)',border:'rgba(217,119,6,0.25)'};
+  if(ph<=7.6) return null;
+  if(ph<=8.0) return {text:'Agua ligeramente alcalina',color:'var(--warn)',bg:'rgba(217,119,6,0.08)',border:'rgba(217,119,6,0.25)'};
+  return {text:'⚠ Cloro ineficaz — pH > 8.0',color:'#dc2626',bg:'rgba(220,38,38,0.08)',border:'rgba(220,38,38,0.3)'};
+}
+
+function getStatus(ppm,m){
+  if(ppm<0)       return {text:'Bajo detección',color:'var(--muted)',bg:'rgba(107,114,128,0.08)',border:'rgba(107,114,128,0.2)'};
+  if(ppm<m.ppmBajo) return {text:'Muy bajo',color:'var(--accent)',bg:'rgba(0,153,204,0.08)',border:'rgba(0,153,204,0.2)'};
+  if(ppm<=m.ppmAlto) return {text:'Óptimo',color:'var(--accent2)',bg:'rgba(22,163,74,0.08)',border:'rgba(22,163,74,0.2)'};
+  if(ppm<=5)      return {text:'Elevado',color:'var(--warn)',bg:'rgba(217,119,6,0.08)',border:'rgba(217,119,6,0.2)'};
+  if(ppm<=7)      return {text:'Alto',color:'var(--warn)',bg:'rgba(217,119,6,0.08)',border:'rgba(217,119,6,0.2)'};
+  return {text:'Muy alto',color:'var(--danger)',bg:'rgba(220,38,38,0.08)',border:'rgba(220,38,38,0.2)'};
+}
+
+function updateTrack(input,min,max){
+  const v=(input.value-min)/(max-min)*100;
+  input.style.background=`linear-gradient(to right,var(--accent) ${v}%,var(--surface2) ${v}%)`;
+}
+
+// ── MODE SWITCH ──────────────────────────────────────────────
+function setMode(modo){
+  modoActual=modo;
+  const m=modos[modo];
+  const isE=modo==='electrolisis';
+  document.getElementById('btnHipo').className='mode-btn'+(isE?'':' active');
+  document.getElementById('btnElectro').className='mode-btn electro'+(isE?' active':'');
+  const tag=document.getElementById('modeTag');
+  tag.textContent=m.tag; tag.className=isE?'mode-tag electro':'mode-tag';
+  document.getElementById('chartTitle').textContent=m.chartTitle;
+  orpInput.min=m.orpMin; orpInput.max=m.orpMax;
+  orpInput.value=Math.min(Math.max(+orpInput.value,m.orpMin),m.orpMax);
+  document.getElementById('orpLabels').innerHTML=`<span>${m.orpMin} mV</span><span>${m.orpMax} mV</span>`;
+  const ph=+phInput.value, orp=+orpInput.value;
+  const newDs=buildDatasets(m.curvas);
+  newDs[newDs.length-1].data=[{x:orp,y:ph}];
+  grafico.data.datasets=newDs;
+  grafico.options.scales.x.min=m.orpMin;
+  grafico.options.scales.x.max=m.orpMax;
+  grafico.update();
+  document.getElementById('salBanner').style.display=isE?'flex':'none';
+  update();
+}
+
+// ── TEMP HELPERS ─────────────────────────────────────────────
+function getTempProfile(t){
+  if(t<=15) return {label:'muy fría',color:'#38bdf8',bg:'rgba(56,189,248,0.07)',border:'rgba(56,189,248,0.35)'};
+  if(t<=20) return {label:'fría',color:'#60a5fa',bg:'rgba(96,165,250,0.07)',border:'rgba(96,165,250,0.35)'};
+  if(t<=26) return {label:'templada',color:'#34d399',bg:'rgba(52,211,153,0.07)',border:'rgba(52,211,153,0.35)'};
+  if(t<=30) return {label:'cálida',color:'#f97316',bg:'rgba(249,115,22,0.07)',border:'rgba(249,115,22,0.35)'};
+  if(t<=35) return {label:'caliente',color:'#ef4444',bg:'rgba(239,68,68,0.07)',border:'rgba(239,68,68,0.35)'};
+  return {label:'muy caliente',color:'#dc2626',bg:'rgba(220,38,38,0.07)',border:'rgba(220,38,38,0.35)'};
+}
+
+function updateTempUI(t){
+  const p = getTempProfile(t);
+  const badge = document.getElementById('tempBadge');
+  const tempValEl = document.getElementById('tempVal');
+  const corrEl = document.getElementById('tempCorrVal');
+  badge.textContent = p.label;
+  badge.style.color = p.color;
+  badge.style.borderColor = p.border;
+  badge.style.background = p.bg;
+  tempValEl.style.color = p.color;
+  document.getElementById('tempInput').style.setProperty('--temp-color', p.color);
+  const corr = (t - 25) * 0.6;
+  const sign = corr >= 0 ? '+' : '';
+  corrEl.textContent = `${sign}${corr.toFixed(1)} mV`;
+  corrEl.style.color = corr > 0 ? '#f97316' : corr < 0 ? '#60a5fa' : 'var(--accent)';
+  // Update range track color
+  const v = (t - 10) / (40 - 10) * 100;
+  document.getElementById('tempInput').style.background = `linear-gradient(to right,${p.color} ${v}%,var(--surface2) ${v}%)`;
+  // Temperature banner
+  const tb = document.getElementById('tempBanner');
+  if(t >= 28){
+    tb.style.display = 'flex';
+    let msg = '';
+    if(t >= 35) msg = `A ${t} °C el cloro se descompone extremadamente rápido. La dosis efectiva se reduce a la mitad cada pocos minutos de sol directo. Se recomienda medir cada 2–3 horas y añadir estabilizador (ácido cianúrico 50–70 ppm).`;
+    else if(t >= 30) msg = `A ${t} °C el consumo de cloro puede duplicarse respecto a 22 °C. Aumenta la cloración y monitoriza con más frecuencia. Mantén ácido cianúrico por encima de 30 ppm.`;
+    else msg = `A ${t} °C el cloro se degrada más rápido. Aumenta la dosis y la frecuencia de medición. Considera añadir estabilizador (ácido cianúrico) si está por debajo de 30 ppm.`;
+    document.getElementById('tempBannerDesc').textContent = msg;
+  } else {
+    tb.style.display = 'none';
+  }
+}
+
+// ── MAIN UPDATE ──────────────────────────────────────────────
 function update(){
- const ph = parseFloat(document.getElementById('ph').value);
- const orp = parseFloat(document.getElementById('orp').value);
- const temp = parseFloat(document.getElementById('tempInput').value);
- const m = modos[modoActual];
+  const ph=+phInput.value, orp=+orpInput.value;
+  const temp=+document.getElementById('tempInput').value;
+  const m=modos[modoActual];
+  phVal.innerText=ph.toFixed(2); orpVal.innerText=orp;
+  updateTrack(phInput,6.5,8.5); updateTrack(orpInput,m.orpMin,m.orpMax);
+  updateTempUI(temp);
+  const ppm=calcularPPM(ph,orp,temp);
+  resultado.innerText=ppm.toFixed(2);
+  resultado.style.color=ppm<=m.ppmAlto?'var(--accent)':ppm<=5?'var(--warn)':'var(--danger)';
 
- // ACTUALIZACIÓN DE TEXTOS (Aquí está la corrección que pedías)
- document.getElementById('phVal').innerText = ph.toFixed(2);
- document.getElementById('orpVal').innerText = Math.round(orp);
- document.getElementById('tempVal').innerText = temp.toFixed(1); // Ahora sí se actualiza
+  const st=getStatus(ppm,m);
+  statusPill.innerHTML=pill(st.text,st.color);
+  statusPill.style.color=st.color; statusPill.style.background=st.bg; statusPill.style.borderColor=st.border;
 
- // Lógica Temperatura
- const corr = (temp - 25) * 0.6;
- document.getElementById('tempCorrVal').innerText = `${corr >= 0 ? '+' : ''}${corr.toFixed(1)} mV`;
- 
- const badge = document.getElementById('tempBadge');
- if(temp <= 20) badge.innerText = "fría"; else if(temp <= 28) badge.innerText = "óptima"; else badge.innerText = "caliente";
+  // Cloro bajo
+  const cb=document.getElementById('chloroBanner');
+  if(ppm<m.ppmBajo){
+    cb.style.display='flex';
+    document.getElementById('chloroBajoDesc').textContent=m.bajoBajoDesc(ppm);
+    document.getElementById('chloroBajoAcciones').innerHTML=m.bajoAcciones;
+  } else cb.style.display='none';
 
- // Cálculo Final
- const ppm = calcularPPM(ph, orp, temp);
- document.getElementById('resultado').innerText = ppm.toFixed(2);
- 
- // Banners
- document.getElementById('tempBanner').style.display = temp >= 30 ? 'flex' : 'none';
- document.getElementById('tempBannerDesc').innerText = `A ${temp.toFixed(1)}°C el cloro se degrada rápidamente.`;
- 
- document.getElementById('statusPill').innerText = ppm < m.ppmBajo ? "BAJO" : ppm > m.ppmAlto ? "ALTO" : "ÓPTIMO";
+  // Cloro alto
+  const ca=document.getElementById('chloroAltoBanner');
+  if(ppm>m.ppmAlto*1.5){
+    ca.style.display='flex';
+    document.getElementById('chloroAltoDesc').textContent=m.altoDesc;
+    document.getElementById('chloroAltoAcciones').innerHTML=m.altoAcciones;
+  } else ca.style.display='none';
 
- grafico.data.datasets[0].data = [{x:orp, y:ph}];
- grafico.update('none');
+  document.getElementById('acidBanner').style.display=ph<7.2?'flex':'none';
+  document.getElementById('alkalineBanner').style.display=ph>8.0?'flex':'none';
+
+  const phSt=getPhStatus(ph);
+  if(phSt){
+    phPill.style.display='flex';
+    phPill.innerHTML=pill(phSt.text,phSt.color);
+    phPill.style.color=phSt.color; phPill.style.background=phSt.bg; phPill.style.borderColor=phSt.border;
+  } else phPill.style.display='none';
+
+  grafico.data.datasets[grafico.data.datasets.length-1].data=[{x:orp,y:ph}];
+  grafico.update('none');
 }
 
-// FUNCIONES DE AJUSTE
+// ── THEME TOGGLE ─────────────────────────────────────────────
+(function(){
+  const html=document.documentElement;
+  const btn=document.getElementById('themeToggle');
+  const prefersDark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+  let isDark=localStorage.getItem('theme')==='dark'||(localStorage.getItem('theme')===null&&prefersDark);
+  function applyTheme(){
+    html.setAttribute('data-theme',isDark?'dark':'light');
+    btn.textContent=isDark?'☀️':'🌙';
+  }
+  applyTheme();
+  btn.addEventListener('click',()=>{
+    isDark=!isDark;
+    localStorage.setItem('theme',isDark?'dark':'light');
+    applyTheme();
+  });
+})();
+
+phInput.oninput=update; orpInput.oninput=update;
+document.getElementById('tempInput').oninput=update;
+
 function adjustTemp(delta){
- const input = document.getElementById('tempInput');
- input.value = (parseFloat(input.value) + delta).toFixed(1);
- update();
+  const v = +document.getElementById('tempInput').value + delta;
+  document.getElementById('tempInput').value = Math.min(40, Math.max(10, v));
+  update();
 }
+
 function adjustPh(delta){
- const input = document.getElementById('ph');
- input.value = (parseFloat(input.value) + delta).toFixed(2);
- update();
+  const v = Math.round((+phInput.value + delta) * 100) / 100;
+  phInput.value = Math.min(8.5, Math.max(6.5, v));
+  update();
 }
 function adjustOrp(delta){
- const input = document.getElementById('orp');
- input.value = Math.round(parseFloat(input.value) + delta);
- update();
+  const m = modos[modoActual];
+  const v = Math.round(+orpInput.value + delta);
+  orpInput.value = Math.min(m.orpMax, Math.max(m.orpMin, v));
+  update();
 }
-
-// EVENTOS
-document.getElementById('ph').oninput = update;
-document.getElementById('orp').oninput = update;
-document.getElementById('tempInput').oninput = update;
-
-document.getElementById('btnHipo').onclick = () => { modoActual = 'hipoclorito'; update(); };
-document.getElementById('btnElectro').onclick = () => { modoActual = 'electrolisis'; update(); };
-
+document.getElementById('btnHipo').addEventListener('click', () => setMode('hipoclorito'));
+document.getElementById('btnElectro').addEventListener('click', () => setMode('electrolisis'));
 update();
+</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js')
+      .then(r=>console.log('SW:',r.scope)).catch(e=>console.log('SW error:',e));
+  });
+}
 </script>
 </body>
 </html>
