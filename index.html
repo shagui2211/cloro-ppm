@@ -222,9 +222,9 @@
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-      <button onclick="adjustTemp(-1)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">−</button>
-      <input type="range" class="temp-range" min="10" max="40" step="1" value="24" id="tempInput" style="flex:1;">
-      <button onclick="adjustTemp(1)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">+</button>
+      <button onclick="adjustTemp(-0.1)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">−</button>
+      <input type="range" class="temp-range" min="10" max="40" step="0.1" value="24" id="tempInput" style="flex:1;">
+      <button onclick="adjustTemp(0.1)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">+</button>
     </div>
     <div class="slider-range-labels"><span>10 °C</span><span style="color:#f59e0b">24 °C óptima</span><span style="color:#dc2626">40 °C</span></div>
     <div style="margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--muted);" id="tempCorrection">Corrección ORP: <span id="tempCorrVal" style="color:var(--accent);">0 mV</span> — La temperatura modifica el equilibrio electroquímico del cloro según la ecuación de Nernst.</div>
@@ -588,6 +588,7 @@ function updateTempUI(t){
   badge.style.color = p.color;
   badge.style.borderColor = p.border;
   badge.style.background = p.bg;
+  tempValEl.innerText = Number.isInteger(t) ? t : t.toFixed(1);
   tempValEl.style.color = p.color;
   document.getElementById('tempInput').style.setProperty('--temp-color', p.color);
   const corr = (t - 25) * 0.6;
@@ -679,7 +680,7 @@ phInput.oninput=update; orpInput.oninput=update;
 document.getElementById('tempInput').oninput=update;
 
 function adjustTemp(delta){
-  const v = +document.getElementById('tempInput').value + delta;
+  const v = Math.round((+document.getElementById('tempInput').value + delta) * 10) / 10;
   document.getElementById('tempInput').value = Math.min(40, Math.max(10, v));
   update();
 }
