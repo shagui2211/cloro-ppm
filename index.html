@@ -127,6 +127,16 @@
   .legend-item{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10px;color:var(--muted);}
   .legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
   canvas#grafico{width:100%!important;height:340px!important;}
+  .temp-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin-bottom:16px;transition:border-color 0.2s;}
+  .temp-card:hover{border-color:rgba(249,115,22,0.35);}
+  [data-theme="dark"] .temp-card:hover{border-color:rgba(251,146,60,0.3);}
+  .temp-bar{display:flex;gap:4px;margin-top:14px;margin-bottom:6px;}
+  .temp-zone{flex:1;height:6px;border-radius:3px;}
+  .temp-indicator{position:relative;margin-top:4px;}
+  input[type=range].temp-range::-webkit-slider-thumb{background:var(--temp-color,#f97316);box-shadow:0 0 8px var(--temp-color,#f97316);}
+  input[type=range].temp-range:hover::-webkit-slider-thumb{transform:scale(1.2);box-shadow:0 0 14px var(--temp-color,#f97316);}
+  input[type=range].temp-range::-moz-range-thumb{background:var(--temp-color,#f97316);box-shadow:0 0 8px var(--temp-color,#f97316);}
+  .temp-badge{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:4px;border:1px solid var(--temp-border,rgba(249,115,22,0.4));color:var(--temp-color,#f97316);background:var(--temp-bg,rgba(249,115,22,0.07));display:inline-block;margin-left:8px;vertical-align:middle;transition:all 0.3s;}
 </style>
 </head>
 <body>
@@ -196,6 +206,36 @@
         <button onclick="adjustOrp(5)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">+</button>
       </div>
       <div class="slider-range-labels" id="orpLabels"><span>550 mV</span><span>950 mV</span></div>
+    </div>
+  </div>
+
+  <!-- Temperatura -->
+  <div class="temp-card" id="tempCard">
+    <div class="slider-header">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span class="slider-name">🌡 Temperatura del agua</span>
+        <span class="temp-badge" id="tempBadge">templada</span>
+      </div>
+      <div>
+        <span class="slider-value" id="tempVal" style="color:var(--temp-color,#f97316);">24</span>
+        <span class="slider-unit">°C</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+      <button onclick="adjustTemp(-1)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">−</button>
+      <input type="range" class="temp-range" min="10" max="40" step="1" value="24" id="tempInput" style="flex:1;">
+      <button onclick="adjustTemp(1)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">+</button>
+    </div>
+    <div class="slider-range-labels"><span>10 °C</span><span style="color:#f59e0b">24 °C óptima</span><span style="color:#dc2626">40 °C</span></div>
+    <div style="margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--muted);" id="tempCorrection">Corrección ORP: <span id="tempCorrVal" style="color:var(--accent);">0 mV</span> — La temperatura modifica el equilibrio electroquímico del cloro según la ecuación de Nernst.</div>
+  </div>
+
+  <!-- Temperatura alta -->
+  <div id="tempBanner" style="display:none;background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.25);border-radius:12px;padding:14px 18px;margin-bottom:16px;align-items:flex-start;gap:12px;">
+    <span style="font-size:20px;line-height:1;flex-shrink:0">🔥</span>
+    <div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#ea580c;margin-bottom:4px;">Agua caliente — mayor consumo de cloro</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:#7c4a1e;line-height:1.6;" id="tempBannerDesc">Por encima de 28 °C el cloro se degrada mucho más rápido. Aumenta la dosis y la frecuencia de medición.</div>
     </div>
   </div>
 
@@ -347,16 +387,28 @@ function orpFromPh(curve, ph){
   return pts[pts.length-1].orp;
 }
 
-function calcularPPM(ph, orp){
+// Nernst temperature correction:
+// ORP shifts ~−0.6 mV per °C above 25°C reference (Clausius-Clapeyron / Nernst approx)
+// More precisely: ΔE = (RT/nF)*ln(...) — for pool ORP the empirical factor is ~0.6 mV/°C
+// We correct the measured ORP to what it would read at 25°C before looking up ppm.
+function tempCorrectedOrp(orp, tempC){
+  const REF_TEMP = 25; // calibration reference for the curve data (°C)
+  const MV_PER_DEG = 0.6; // mV shift per °C (Nernst approximation for aqueous Cl₂/HOCl)
+  return orp + (tempC - REF_TEMP) * MV_PER_DEG;
+}
+
+function calcularPPM(ph, orp, tempC){
+  const t = tempC !== undefined ? tempC : +document.getElementById('tempInput').value;
+  const orpRef = tempCorrectedOrp(orp, t);
   const curvas = modos[modoActual].curvas;
   const vals = curvas.map(c=>({ppm:c.ppm, orp:orpFromPh(c,ph)}));
   for(let i=0;i<vals.length-1;i++){
-    if(orp>=vals[i].orp && orp<=vals[i+1].orp){
-      const t=(orp-vals[i].orp)/(vals[i+1].orp-vals[i].orp);
-      return vals[i].ppm + t*(vals[i+1].ppm-vals[i].ppm);
+    if(orpRef>=vals[i].orp && orpRef<=vals[i+1].orp){
+      const f=(orpRef-vals[i].orp)/(vals[i+1].orp-vals[i].orp);
+      return vals[i].ppm + f*(vals[i+1].ppm-vals[i].ppm);
     }
   }
-  if(orp<vals[0].orp) return vals[0].ppm;
+  if(orpRef<vals[0].orp) return vals[0].ppm;
   return vals[vals.length-1].ppm;
 }
 
@@ -517,13 +569,57 @@ function setMode(modo){
   update();
 }
 
+// ── TEMP HELPERS ─────────────────────────────────────────────
+function getTempProfile(t){
+  if(t<=15) return {label:'muy fría',color:'#38bdf8',bg:'rgba(56,189,248,0.07)',border:'rgba(56,189,248,0.35)'};
+  if(t<=20) return {label:'fría',color:'#60a5fa',bg:'rgba(96,165,250,0.07)',border:'rgba(96,165,250,0.35)'};
+  if(t<=26) return {label:'templada',color:'#34d399',bg:'rgba(52,211,153,0.07)',border:'rgba(52,211,153,0.35)'};
+  if(t<=30) return {label:'cálida',color:'#f97316',bg:'rgba(249,115,22,0.07)',border:'rgba(249,115,22,0.35)'};
+  if(t<=35) return {label:'caliente',color:'#ef4444',bg:'rgba(239,68,68,0.07)',border:'rgba(239,68,68,0.35)'};
+  return {label:'muy caliente',color:'#dc2626',bg:'rgba(220,38,38,0.07)',border:'rgba(220,38,38,0.35)'};
+}
+
+function updateTempUI(t){
+  const p = getTempProfile(t);
+  const badge = document.getElementById('tempBadge');
+  const tempValEl = document.getElementById('tempVal');
+  const corrEl = document.getElementById('tempCorrVal');
+  badge.textContent = p.label;
+  badge.style.color = p.color;
+  badge.style.borderColor = p.border;
+  badge.style.background = p.bg;
+  tempValEl.style.color = p.color;
+  document.getElementById('tempInput').style.setProperty('--temp-color', p.color);
+  const corr = (t - 25) * 0.6;
+  const sign = corr >= 0 ? '+' : '';
+  corrEl.textContent = `${sign}${corr.toFixed(1)} mV`;
+  corrEl.style.color = corr > 0 ? '#f97316' : corr < 0 ? '#60a5fa' : 'var(--accent)';
+  // Update range track color
+  const v = (t - 10) / (40 - 10) * 100;
+  document.getElementById('tempInput').style.background = `linear-gradient(to right,${p.color} ${v}%,var(--surface2) ${v}%)`;
+  // Temperature banner
+  const tb = document.getElementById('tempBanner');
+  if(t >= 28){
+    tb.style.display = 'flex';
+    let msg = '';
+    if(t >= 35) msg = `A ${t} °C el cloro se descompone extremadamente rápido. La dosis efectiva se reduce a la mitad cada pocos minutos de sol directo. Se recomienda medir cada 2–3 horas y añadir estabilizador (ácido cianúrico 50–70 ppm).`;
+    else if(t >= 30) msg = `A ${t} °C el consumo de cloro puede duplicarse respecto a 22 °C. Aumenta la cloración y monitoriza con más frecuencia. Mantén ácido cianúrico por encima de 30 ppm.`;
+    else msg = `A ${t} °C el cloro se degrada más rápido. Aumenta la dosis y la frecuencia de medición. Considera añadir estabilizador (ácido cianúrico) si está por debajo de 30 ppm.`;
+    document.getElementById('tempBannerDesc').textContent = msg;
+  } else {
+    tb.style.display = 'none';
+  }
+}
+
 // ── MAIN UPDATE ──────────────────────────────────────────────
 function update(){
   const ph=+phInput.value, orp=+orpInput.value;
+  const temp=+document.getElementById('tempInput').value;
   const m=modos[modoActual];
   phVal.innerText=ph.toFixed(2); orpVal.innerText=orp;
   updateTrack(phInput,6.5,8.5); updateTrack(orpInput,m.orpMin,m.orpMax);
-  const ppm=calcularPPM(ph,orp);
+  updateTempUI(temp);
+  const ppm=calcularPPM(ph,orp,temp);
   resultado.innerText=ppm.toFixed(2);
   resultado.style.color=ppm<=m.ppmAlto?'var(--accent)':ppm<=5?'var(--warn)':'var(--danger)';
 
@@ -580,6 +676,13 @@ function update(){
 })();
 
 phInput.oninput=update; orpInput.oninput=update;
+document.getElementById('tempInput').oninput=update;
+
+function adjustTemp(delta){
+  const v = +document.getElementById('tempInput').value + delta;
+  document.getElementById('tempInput').value = Math.min(40, Math.max(10, v));
+  update();
+}
 
 function adjustPh(delta){
   const v = Math.round((+phInput.value + delta) * 100) / 100;
