@@ -202,7 +202,7 @@
       </div>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
         <button onclick="adjustOrp(-0.01)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">−</button>
-        <input type="range" min="550" max="950" step="1" value="750" id="orp" style="flex:1;">
+        <input type="range" min="550" max="950" step="0.01" value="750" id="orp" style="flex:1;">
         <button onclick="adjustOrp(0.01)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">+</button>
       </div>
       <div class="slider-range-labels" id="orpLabels"><span>550 mV</span><span>950 mV</span></div>
@@ -223,7 +223,7 @@
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
       <button onclick="adjustTemp(-0.01)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">−</button>
-      <input type="range" class="temp-range" min="10" max="40" step="0.1" value="24" id="tempInput" style="flex:1;">
+      <input type="range" class="temp-range" min="10" max="40" step="0.01" value="24" id="tempInput" style="flex:1;">
       <button onclick="adjustTemp(0.01)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">+</button>
     </div>
     <div class="slider-range-labels"><span>10 °C</span><span style="color:#f59e0b">24 °C óptima</span><span style="color:#dc2626">40 °C</span></div>
