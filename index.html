@@ -701,10 +701,82 @@ document.getElementById('btnElectro').addEventListener('click', () => setMode('e
 update();
 </script>
 <script>
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('./sw.js')
-      .then(r=>console.log('SW:',r.scope)).catch(e=>console.log('SW error:',e));
+// ── SERVICE WORKER + AUTO-UPDATE ─────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      console.log('SW registrado:', reg.scope);
+
+      // Comprueba si hay nueva versión cada 60 segundos
+      setInterval(() => reg.update(), 60000);
+
+      // Cuando el SW detecta una actualización disponible
+      reg.addEventListener('updatefound', () => {
+        const newSW = reg.installing;
+        newSW.addEventListener('statechange', () => {
+          if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+            // Hay una nueva versión instalada y esperando → mostrar banner
+            showUpdateBanner();
+          }
+        });
+      });
+
+    }).catch(e => console.log('SW error:', e));
+
+    // Cuando el SW toma el control → recargar para aplicar cambios
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      window.location.reload();
+    });
+  });
+}
+
+function showUpdateBanner() {
+  if (document.getElementById('update-banner')) return; // ya existe
+  const banner = document.createElement('div');
+  banner.id = 'update-banner';
+  banner.innerHTML = `
+    <span style="font-size:18px">🔄</span>
+    <span style="flex:1">Nueva versión disponible</span>
+    <button id="update-btn" onclick="applyUpdate()">Actualizar</button>
+    <button id="update-close" onclick="this.parentElement.remove()" title="Cerrar">✕</button>
+  `;
+  banner.style.cssText = [
+    'position:fixed','bottom:24px','left:50%','transform:translateX(-50%)',
+    'background:var(--accent)','color:#fff','padding:12px 16px','border-radius:14px',
+    'display:flex','align-items:center','gap:12px','z-index:9999','min-width:260px',
+    'font-family:var(--mono)','font-size:13px',
+    'box-shadow:0 4px 24px rgba(0,0,0,0.3)',
+    'animation:slideUp 0.3s ease'
+  ].join(';');
+
+  // Estilos de los botones internos
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideUp {
+      from { opacity:0; transform:translateX(-50%) translateY(20px); }
+      to   { opacity:1; transform:translateX(-50%) translateY(0); }
+    }
+    #update-btn {
+      background:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.4);
+      color:#fff;padding:6px 14px;border-radius:8px;cursor:pointer;
+      font-family:var(--mono);font-size:12px;white-space:nowrap;
+    }
+    #update-btn:hover { background:rgba(255,255,255,0.4); }
+    #update-close {
+      background:transparent;border:none;color:rgba(255,255,255,0.7);
+      cursor:pointer;font-size:16px;padding:2px 4px;line-height:1;
+    }
+    #update-close:hover { color:#fff; }
+  `;
+  document.head.appendChild(style);
+  document.body.appendChild(banner);
+}
+
+function applyUpdate() {
+  navigator.serviceWorker.ready.then(reg => {
+    if (reg.waiting) {
+      reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+    }
   });
 }
 </script>
